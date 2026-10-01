@@ -27,7 +27,7 @@ function boot(stored={}){
  const valid=await request({action:'preview',csv});const forged=await request({action:'commit',csv:csv+' ',token:valid.token});assert.equal(forged.ok,false);
  const created=await request({action:'commit',csv,token:valid.token});assert.equal(created.count,2);const imported=env.context.window.OplenDemo.snapshot().people.slice(-2);assert.equal(imported[0].manager_id,imported[1].id);assert(!env.storage.get('oplen-mirror-scale-v2').includes(created.credentials[0].password));
  const duplicate=await request({action:'preview',csv});assert(!duplicate.preview.valid);assert.equal(env.context.window.OplenDemo.snapshot().people.length,102);
- env.context.location.search='?previewUser=2';assert.equal((await request({action:'preview',csv})).ok,false);
+ env.context.location.search='?previewUser='+imported[1].id;assert.deepEqual((await env.fetch('index.php?action=bootstrap')).user.permissions,['knowledge']);env.context.location.search='?previewUser=2';assert.equal((await request({action:'preview',csv})).ok,false);
  console.log('CSV preview, hierarchy, cycles, commit token, duplicate protection and credential privacy verified.');
  console.log('100 people, 10 departments, hierarchy, references, dashboard, isolation and persistence verified.');
 })().catch(e=>{console.error(e);process.exit(1)});
