@@ -1,24 +1,22 @@
-# Oplen Demo — espejo de la app
+# Oplen Demo — interfaz compartida en vivo
 
-El demo carga los mismos archivos JavaScript, CSS e iconos de `jpulidot/oplen-master`, fijados al commit `70aaa949cb038cf1a2b12d341d63c70118dab155`. No tiene un renderer ni un tema alternativo. `demo/frontend-source.json` registra el origen de los archivos.
+El demo utiliza `frontend.php` y `assets/` de la instalación de Oplen en el mismo servidor. No copia el frontend: cada petición lee la versión desplegada de la app. No hay sincronización de repositorios ni tareas programadas necesarias.
 
-## Hostinger
+La app conserva sus controles de sesión, empresa y acceso en `index.php`; la plantilla solo contiene presentación. El demo no carga `installation.php`, configuración de clientes ni base de datos. Su adaptador `demo/backend.js` usa datos ficticios en localStorage e intercepta las solicitudes API antes de cargar los scripts de la app. Los servicios externos continúan simulados o limitados.
 
-Subir `index.html`, `assets/` y `demo/` a la raíz de demo.oplen.io. El demo es estático y no requiere PHP, base de datos ni credenciales. El repositorio no configura un despliegue automático. La carpeta antigua `demo-assets/` ya no se utiliza.
+## Instalación en Hostinger (una vez)
 
-## Datos y acciones
+1. Desplegar `index.php` y `frontend.php` del repositorio `oplen-master` en la raíz de la app.
+2. Subir `.htaccess`, `index.php`, `asset.php`, `shared-app.php` y `demo/backend.js` de este repositorio a la raíz de demo.oplen.io. Incluir el archivo oculto `.htaccess` y reemplazar el existente. No subir `tests/` ni `scripts/`.
+3. Por defecto, la app se busca en `../app` respecto a la carpeta del demo. Si el demo está en `/home/u173390266/domains/oplen.io/public_html/demo`, encuentra la app en `/home/u173390266/domains/oplen.io/public_html/app`. Para otra distribución configurar la variable de entorno PHP `OPLEN_SHARED_APP_ROOT` con esa ruta absoluta.
+4. Retirar el antiguo `index.html`. Las carpetas `assets/` y `demo-assets/` antiguas ya no se usan: las reglas de Apache sirven exclusivamente los assets de la app.
 
-Horizonte es una empresa ficticia. `demo/backend.js` responde localmente a las solicitudes API del frontend. Las solicitudes API no salen al servidor. Los datos se guardan en localStorage con una clave propia del demo. Restablecer demo restaura la empresa de ejemplo. No se incluyen datos reales ni secretos.
+La app debe desplegarse primero. Sin la plantilla compartida, el demo devuelve 503, evitando mostrar una copia desactualizada. `index.php` no se almacena en caché, sus versiones reflejan el contenido real y los assets usan ETag y revalidación.
 
-El frontend es el de la app; los servicios son simulados. Las rutas, sesiones, evaluación de comprensión y prácticas usan contenido y reglas predefinidos, sin IA. Las ediciones de equipo, empresa, responsabilidades y documentos se guardan localmente. No se envían correos o reportes, ni se procesan pagos. Los archivos, comentarios y el envío de proyectos finales necesitan servicios de backend y muestran su limitación en el demo.
+Después de esta instalación, un despliegue de frontend en app se refleja en demo en la siguiente carga. Un cambio de contrato API puede requerir actualizar el adaptador ficticio; compartir código no inventa respuestas de backend.
 
-## Validación
+## Pruebas
 
-Se verificaron las rutas principales en modo claro y oscuro, escritorio y móvil; navegación, pestañas, fichas y ausencia de tráfico API al servidor. Se probó crear una ruta, generar una sesión, comprobar comprensión, evaluar una práctica, editar empresa y mantener el estado local.
+Con la app en la carpeta hermana `app`, ejecutar `php -S 127.0.0.1:8878 -t . tests/router.php`. Ejecutar `node tests/browser.cjs`, `node tests/interactions.cjs` y `python3 tests/shared-source.py`. Playwright debe estar instalado; `OPLEN_CHROMIUM` permite especificar Chromium. El servidor integrado solo se usa para pruebas; Hostinger usa `.htaccess`.
 
-`tests/browser.cjs` permite repetir las comprobaciones con Playwright y Chromium, usando OPLEN_DEMO_URL y OPLEN_CHROMIUM. `tests/interactions.cjs` comprueba el recorrido de aprendizaje y edición. Sirve el proyecto con `python -m http.server 8878` antes de ejecutarlos.
-
-## Actualizar el espejo
-
-`node scripts/sync-frontend.mjs COMMIT` descarga los archivos del frontend desde un commit de oplen-master, actualiza el manifiesto y cambia las versiones de caché del HTML. Revisar el contrato del backend simulado y repetir las pruebas antes de subir el nuevo paquete. No modificar los archivos en assets directamente: los cambios visuales deben hacerse en la app y sincronizarse.
-
+El script antiguo `scripts/sync-frontend.mjs` y el manifiesto de la versión estática son históricos; la instalación compartida no los utiliza.
