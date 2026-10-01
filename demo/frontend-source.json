@@ -1,0 +1,33 @@
+{
+  "sourceRepository": "jpulidot/oplen-master",
+  "sourceCommit": "70aaa949cb038cf1a2b12d341d63c70118dab155",
+  "assets": [
+    "assets/app.js",
+    "assets/career-admin.js",
+    "assets/career-final.js",
+    "assets/company-catalogs.js",
+    "assets/company.css",
+    "assets/company.js",
+    "assets/development-recommendations.js",
+    "assets/evaluation-runs.js",
+    "assets/evaluations.js",
+    "assets/knowledge-blocks.js",
+    "assets/knowledge-comments.js",
+    "assets/knowledge.css",
+    "assets/knowledge.js",
+    "assets/learning.js",
+    "assets/management.js",
+    "assets/onboarding-evaluations.js",
+    "assets/operations.js",
+    "assets/oplen-favicon.svg",
+    "assets/oplen-logo-white.svg",
+    "assets/position-tags.js",
+    "assets/practice-response.js",
+    "assets/study-studio.css",
+    "assets/study-studio.js",
+    "assets/styles.css",
+    "assets/ui-polish.css",
+    "assets/user-preview.js",
+    "assets/workspace.css"
+  ]
+}

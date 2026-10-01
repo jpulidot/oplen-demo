@@ -1,32 +1,24 @@
-# Oplen Demo
+# Oplen Demo — espejo de la app
 
-Demo interactivo para mostrar cómo Oplen conecta estructura organizacional, responsabilidades, conocimiento y desarrollo. Usa una empresa ficticia: Horizonte.
+El demo carga los mismos archivos JavaScript, CSS e iconos de `jpulidot/oplen-master`, fijados al commit `70aaa949cb038cf1a2b12d341d63c70118dab155`. No tiene un renderer ni un tema alternativo. `demo/frontend-source.json` registra el origen de los archivos.
 
-## Abrir
+## Hostinger
 
-Abre `index.html` en un navegador moderno, o sirve la raíz del repositorio con `python3 -m http.server 8080` y entra a `http://localhost:8080`.
+Subir `index.html`, `assets/` y `demo/` a la raíz de demo.oplen.io. El demo es estático y no requiere PHP, base de datos ni credenciales. El repositorio no configura un despliegue automático. La carpeta antigua `demo-assets/` ya no se utiliza.
 
-Para Hostinger, sube `index.html` y `demo-assets/` a la raíz del subdominio del demo. No requiere PHP, MySQL ni claves de IA. Este repositorio no activa despliegues automáticos.
+## Datos y acciones
 
-## Recorrido
+Horizonte es una empresa ficticia. `demo/backend.js` responde localmente a las solicitudes API del frontend. Las solicitudes API no salen al servidor. Los datos se guardan en localStorage con una clave propia del demo. Restablecer demo restaura la empresa de ejemplo. No se incluyen datos reales ni secretos.
 
-1. Equipo: personas, departamentos, puestos y mapa de empresa.
-2. Responsabilidades: responsable, alcance, decisiones y escalamiento. Dirección y Manager pueden cambiar la asignación.
-3. Documentación: buscar, leer, crear y editar procedimientos.
-4. Career Path: tres sesiones de ejemplo con lectura y comprobación de comprensión.
-5. Evaluaciones: completar tres casos, consultar resultado e historial.
+El frontend es el de la app; los servicios son simulados. Las rutas, sesiones, evaluación de comprensión y prácticas usan contenido y reglas predefinidos, sin IA. Las ediciones de equipo, empresa, responsabilidades y documentos se guardan localmente. No se envían correos o reportes, ni se procesan pagos. Los archivos, comentarios y el envío de proyectos finales necesitan servicios de backend y muestran su limitación en el demo.
 
-Cambia la perspectiva en el encabezado. Dirección puede agregar personas; Dirección y Manager pueden editar documentos. El selector simula una experiencia de usuario; no implementa autorización ni aislamiento de datos.
+## Validación
 
-Los cambios se guardan en localStorage y solo son visibles en ese navegador. Restablecer demo elimina los cambios locales. Los reportes de error se guardan localmente y no se envían a Oplen. Las evaluaciones usan reglas fijas, no IA. No hay gestor de tareas.
+Se verificaron las rutas principales en modo claro y oscuro, escritorio y móvil; navegación, pestañas, fichas y ausencia de tráfico API al servidor. Se probó crear una ruta, generar una sesión, comprobar comprensión, evaluar una práctica, editar empresa y mantener el estado local.
 
-## Base y alcance
+`tests/browser.cjs` permite repetir las comprobaciones con Playwright y Chromium, usando OPLEN_DEMO_URL y OPLEN_CHROMIUM. `tests/interactions.cjs` comprueba el recorrido de aprendizaje y edición. Sirve el proyecto con `python -m http.server 8878` antes de ejecutarlos.
 
-El ZIP `_public_html (1).zip` aportado por Julio se revisó como referencia: contiene un sitio personal y la aplicación original en `os/`, con frontend JavaScript y API PHP/MySQL. El demo conserva el alcance y recorrido de sus módulos, pero es una implementación de presentación independiente. No reemplaza ni despliega la aplicación de producción. No incluye datos reales, configuración privada, claves ni el sitio personal del ZIP.
+## Actualizar el espejo
 
-## Verificación
+`node scripts/sync-frontend.mjs COMMIT` descarga los archivos del frontend desde un commit de oplen-master, actualiza el manifiesto y cambia las versiones de caché del HTML. Revisar el contrato del backend simulado y repetir las pruebas antes de subir el nuevo paquete. No modificar los archivos en assets directamente: los cambios visuales deben hacerse en la app y sincronizarse.
 
-- `node --check demo-assets/demo.js`
-- `node demo-tests/smoke.cjs`
-
-El smoke test comprueba rutas, mapa, variantes de perspectiva, edición y escape de documentos, puntuación de sesiones/evaluaciones y persistencia con un DOM simulado. La revisión visual en navegador real queda pendiente; el entorno de ejecución no dispone de Chromium.
