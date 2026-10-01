@@ -31,3 +31,7 @@ El frontend sigue leyendo la plantilla compartida de app. Solo cambian los datos
 La nueva empresa usa `oplen-mirror-scale-v2` en localStorage. La clave anterior se conserva intacta, y los visitantes reciben la nueva empresa al recargar después del despliegue. Las ediciones hechas dentro de esta versión se conservan; Restablecer demo vuelve a generar los 100 colaboradores. El pie muestra la versión y fecha del conjunto de datos además de la versión de la app compartida.
 
 Ejecutar `node tests/scale.cjs` para validar cantidades, jerarquía sin ciclos, referencias a documentos y responsables, filtros y cobertura de evaluaciones, y aislamiento del estado local.
+
+## Importación de equipo · adaptador v1.1.1 · 01 Oct 2026 · 17:50 CDMX
+
+La pantalla compartida de App V1.49.7 permite descargar la plantilla, validar un CSV y simular altas en el navegador. Valida estructura, correos repetidos, permisos y ciclos de responsables. La vista previa no modifica datos; las altas se guardan localmente y los accesos ficticios solo se devuelven en la respuesta, sin almacenarse. No se envían correos. Para usar este flujo desplegar el frontend de App y este adaptador.

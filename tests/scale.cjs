@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('nod
 const source=fs.readFileSync('demo/backend.js','utf8');
 function boot(stored={}){
  const storage=new Map(Object.entries(stored));
- const context={structuredClone,URL,URLSearchParams,Response,FormData,File:class File{},Event:class Event{},console,confirm:()=>true,location:{href:'https://demo.oplen.io/',origin:'https://demo.oplen.io',search:'',reload(){}},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},sessionStorage:{clear(){}},MutationObserver:class {observe(){}},document:{querySelector:()=>null},XMLHttpRequest:class {open(){}send(){}},window:{fetch:()=>{throw Error('Unexpected network request');}}};
+ const context={crypto:require('node:crypto').webcrypto,TextEncoder,structuredClone,URL,URLSearchParams,Response,FormData,File:class File{},Event:class Event{},console,confirm:()=>true,location:{href:'https://demo.oplen.io/',origin:'https://demo.oplen.io',search:'',reload(){}},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},sessionStorage:{clear(){}},MutationObserver:class {observe(){}},document:{querySelector:()=>null},XMLHttpRequest:class {open(){}send(){}},window:{fetch:()=>{throw Error('Unexpected network request');}}};
  vm.runInNewContext(source,context);return {context,storage,fetch:async path=>{const response=await context.window.fetch('https://demo.oplen.io/api/'+path);assert.equal(response.status,200);return response.json();}};
 }
 (async()=>{
@@ -20,5 +20,14 @@ function boot(stored={}){
  assert.deepEqual(JSON.parse(env.storage.get('oplen-mirror-v1')),old);
  const changed=structuredClone(s);changed.company.name='My saved demo';const persisted=boot({'oplen-mirror-scale-v2':JSON.stringify(changed)});assert.equal(persisted.context.window.OplenDemo.snapshot().company.name,'My saved demo');
  const bootstrap=await env.fetch('index.php?action=bootstrap');assert.equal(bootstrap.directory.length,100);
+ const csv='nombre,correo,departamento,puesto,responsable_correo,nivel,permisos\nNueva Persona,new@horizonte.example,Dirección,Directora general,boss@horizonte.example,colaborador,directory\nNuevo Manager,boss@horizonte.example,Dirección,Directora general,persona1@horizonte.example,manager,knowledge\n';
+ const request=async body=>{const response=await env.context.window.fetch('https://demo.oplen.io/api/team-import.php',{method:'POST',body:JSON.stringify({csrf:'demo-local',...body})});return response.json()};
+ const preview=await request({action:'preview',csv});assert(preview.preview.valid);assert.equal(env.context.window.OplenDemo.snapshot().people.length,100);
+ const cycle=await request({action:'preview',csv:csv.replace('persona1@horizonte.example,manager','new@horizonte.example,manager')});assert(!cycle.preview.valid);
+ const valid=await request({action:'preview',csv});const forged=await request({action:'commit',csv:csv+' ',token:valid.token});assert.equal(forged.ok,false);
+ const created=await request({action:'commit',csv,token:valid.token});assert.equal(created.count,2);const imported=env.context.window.OplenDemo.snapshot().people.slice(-2);assert.equal(imported[0].manager_id,imported[1].id);assert(!env.storage.get('oplen-mirror-scale-v2').includes(created.credentials[0].password));
+ const duplicate=await request({action:'preview',csv});assert(!duplicate.preview.valid);assert.equal(env.context.window.OplenDemo.snapshot().people.length,102);
+ env.context.location.search='?previewUser=2';assert.equal((await request({action:'preview',csv})).ok,false);
+ console.log('CSV preview, hierarchy, cycles, commit token, duplicate protection and credential privacy verified.');
  console.log('100 people, 10 departments, hierarchy, references, dashboard, isolation and persistence verified.');
 })().catch(e=>{console.error(e);process.exit(1)});
