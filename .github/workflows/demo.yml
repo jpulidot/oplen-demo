@@ -1,0 +1,14 @@
+name: Demo data checks
+on: [push, pull_request]
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Adapter syntax
+        run: node --check demo/backend.js
+      - name: Scale, hierarchy, references and local persistence
+        run: node tests/scale.cjs

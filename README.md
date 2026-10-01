@@ -20,3 +20,14 @@ Después de esta instalación, un despliegue de frontend en app se refleja en de
 Con la app en la carpeta hermana `app`, ejecutar `php -S 127.0.0.1:8878 -t . tests/router.php`. Ejecutar `node tests/browser.cjs`, `node tests/interactions.cjs` y `python3 tests/shared-source.py`. Playwright debe estar instalado; `OPLEN_CHROMIUM` permite especificar Chromium. El servidor integrado solo se usa para pruebas; Hostinger usa `.htaccess`.
 
 El script antiguo `scripts/sync-frontend.mjs` y el manifiesto de la versión estática son históricos; la instalación compartida no los utiliza.
+
+
+## Empresa ficticia ampliada · datos v1.1.0
+
+Horizonte contiene 100 colaboradores activos en 10 departamentos (10 personas por área): Dirección, Operaciones, Marketing, Soporte, Ventas, Finanzas, People & Culture, Producto, Tecnología y Customer Success. Incluye 40 puestos, 30 responsabilidades con guías relacionadas, 10 rutas de desarrollo y 61 evaluaciones de ejemplo (incluida la propia cuenta de demo). Las evaluaciones usan el formato de competencias anterior; el dashboard calcula cobertura real de estos ejemplos y no inventa promedios del nuevo formato de desempeño.
+
+El frontend sigue leyendo la plantilla compartida de app. Solo cambian los datos ficticios y su adaptador. Para publicar esta actualización desplegar `demo/backend.js` del repositorio en el demo; no necesita migraciones ni cambios a las empresas reales.
+
+La nueva empresa usa `oplen-mirror-scale-v2` en localStorage. La clave anterior se conserva intacta, y los visitantes reciben la nueva empresa al recargar después del despliegue. Las ediciones hechas dentro de esta versión se conservan; Restablecer demo vuelve a generar los 100 colaboradores. El pie muestra la versión y fecha del conjunto de datos además de la versión de la app compartida.
+
+Ejecutar `node tests/scale.cjs` para validar cantidades, jerarquía sin ciclos, referencias a documentos y responsables, filtros y cobertura de evaluaciones, y aislamiento del estado local.
