@@ -1,0 +1,10 @@
+<?php declare(strict_types=1);
+require dirname(__DIR__).'/shared-app.php';
+putenv('OPLEN_SHARED_APP_ROOT');
+$separate = oplen_demo_app_candidates('/home/example/domains/demo.oplen.io/public_html');
+if (!in_array('/home/example/domains/oplen.io/public_html/app', $separate, true)) throw new RuntimeException('Hostinger separate domains');
+$sibling = oplen_demo_app_candidates('/home/example/domains/oplen.io/public_html/demo');
+if ($sibling[0] !== '/home/example/domains/oplen.io/public_html/demo/../app') throw new RuntimeException('Sibling app');
+putenv('OPLEN_SHARED_APP_ROOT=/custom/app');
+if (oplen_demo_app_candidates('/demo') !== ['/custom/app']) throw new RuntimeException('Explicit override');
+echo "PASS: sibling app, separate Hostinger domains, explicit override\n";

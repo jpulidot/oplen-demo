@@ -8,7 +8,7 @@ La app conserva sus controles de sesión, empresa y acceso en `index.php`; la pl
 
 1. Desplegar `index.php` y `frontend.php` del repositorio `oplen-master` en la raíz de la app.
 2. Subir `.htaccess`, `index.php`, `asset.php`, `shared-app.php` y `demo/backend.js` de este repositorio a la raíz de demo.oplen.io. Incluir el archivo oculto `.htaccess` y reemplazar el existente. No subir `tests/` ni `scripts/`.
-3. Por defecto, la app se busca en `../app` respecto a la carpeta del demo. Si el demo está en `/home/u173390266/domains/oplen.io/public_html/demo`, encuentra la app en `/home/u173390266/domains/oplen.io/public_html/app`. Para otra distribución configurar la variable de entorno PHP `OPLEN_SHARED_APP_ROOT` con esa ruta absoluta.
+3. Por defecto, la app se busca en `../app` respecto a la carpeta del demo. Si el demo está en `/home/u173390266/domains/oplen.io/public_html/demo`, encuentra la app en `/home/u173390266/domains/oplen.io/public_html/app`. También se detecta automáticamente la estructura `domains/demo.oplen.io/public_html` con la app en `domains/oplen.io/public_html/app`. Para otra distribución configurar la variable de entorno PHP `OPLEN_SHARED_APP_ROOT` con esa ruta absoluta.
 4. Retirar el antiguo `index.html`. Las carpetas `assets/` y `demo-assets/` antiguas ya no se usan: las reglas de Apache sirven exclusivamente los assets de la app.
 
 La app debe desplegarse primero. Sin la plantilla compartida, el demo devuelve 503, evitando mostrar una copia desactualizada. `index.php` no se almacena en caché, sus versiones reflejan el contenido real y los assets usan ETag y revalidación.
