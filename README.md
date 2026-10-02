@@ -35,3 +35,7 @@ Ejecutar `node tests/scale.cjs` para validar cantidades, jerarquía sin ciclos, 
 ## Importación de equipo · adaptador v1.1.1 · 01 Oct 2026 · 17:50 CDMX
 
 La pantalla compartida de App V1.49.7 permite descargar la plantilla, validar un CSV y simular altas en el navegador. Valida estructura, correos repetidos, permisos y ciclos de responsables. La vista previa no modifica datos; las altas se guardan localmente y los accesos ficticios solo se devuelven en la respuesta, sin almacenarse. No se envían correos. Para usar este flujo desplegar el frontend de App y este adaptador.
+
+## Invitaciones · adaptador v1.1.2 · 01 Oct 2026 · 18:12 CDMX
+
+Las altas individuales y CSV pueden quedar pendientes de activar sin generar contraseñas compartidas. El diálogo compartido permite simular el envío; el adaptador responde `simulated: true` y conserva la cuenta pendiente. No sale correo ni se genera un enlace real. Los estados y el límite de reenvío se guardan localmente. Las cuentas existentes conservan sus datos. Desplegar App V1.49.8 y este adaptador.
