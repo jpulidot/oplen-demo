@@ -47,3 +47,8 @@ Dashboard, DNC y capacitaciones externas de App V1.50.0. Agrega ocho diagnóstic
 ## Adaptador 1.1.4 · 02 Oct 2026 · 13:30 CDMX
 
 Migración única para navegadores que guardaron una lista vacía de evaluaciones en una versión anterior. Recupera ejemplos para personas activas cuyo departamento y puesto siguen coincidiendo; conserva nombres editados, empresa, comentarios y todos los demás datos locales. Una lista con evaluaciones existentes se conserva completa. No requiere restablecer el demo.
+
+## Adaptador 1.1.5
+- Fichas del colaborador con evaluaciones publicadas, brechas y DNC/capacitaciones vinculadas exclusivamente a esa persona.
+- Mismos límites de consulta para responsables, vista previa y rutas personales.
+- Las rutas nuevas guardan su propietario; rutas antiguas sin propietario se conservan y no se atribuyen a otra persona.
