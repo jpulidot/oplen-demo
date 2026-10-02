@@ -12,3 +12,5 @@ jobs:
         run: node --check demo/backend.js
       - name: Scale, hierarchy, references and local persistence
         run: node tests/scale.cjs
+      - name: Training contracts, DNC and cumulative ROI
+        run: node tests/training.cjs

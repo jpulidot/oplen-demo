@@ -39,3 +39,7 @@ La pantalla compartida de App V1.49.7 permite descargar la plantilla, validar un
 ## Invitaciones · adaptador v1.1.2 · 01 Oct 2026 · 18:12 CDMX
 
 Las altas individuales y CSV pueden quedar pendientes de activar sin generar contraseñas compartidas. El diálogo compartido permite simular el envío; el adaptador responde `simulated: true` y conserva la cuenta pendiente. No sale correo ni se genera un enlace real. Los estados y el límite de reenvío se guardan localmente. Las cuentas existentes conservan sus datos. Desplegar App V1.49.8 y este adaptador.
+
+## Adaptador 1.1.3 · 02 Oct 2026 · 00:08 CDMX
+
+Dashboard, DNC y capacitaciones externas de App V1.50.0. Agrega ocho diagnósticos y tres cursos ficticios al abrir el módulo, sin sustituir personas, evaluaciones ni datos locales existentes. Nuevos ejemplos de evaluación incluyen brechas; las evaluaciones previamente guardadas se conservan. ROI distingue costos y retorno estimados de evidencia validada, con seguimientos acumulados de 30/60/90 días. Correr `node tests/training.cjs`.
