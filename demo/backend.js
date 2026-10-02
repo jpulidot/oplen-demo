@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const KEY='oplen-mirror-scale-v2',clone=v=>structuredClone(v),now=()=>new Date().toISOString(),permissions=['directory','departments','knowledge','development','evaluations'];
 // Horizonte: fictional service company, 100 active people across ten departments.
-const demoBuild='1.1.3 · 02 Oct 2026 · 00:16 CDMX';
+const demoBuild='1.1.4 · 02 Oct 2026 · 13:30 CDMX';
 const deptSpecs=[
  ['Dirección','Directora general','Coordinar la estrategia y alinear las metas de toda la compañía.',['Planeación estratégica','Seguimiento del negocio','Gobierno y decisiones'],'Asistente de dirección','Analista de estrategia','Coordinador ejecutivo'],
  ['Operaciones','Manager de operaciones','Asegurar entregas consistentes, capacidad y mejora continua.',['Planificación de capacidad','Control de calidad','Mejora de procesos'],'Analista de operaciones','Especialista de calidad','Coordinador de proyectos'],
@@ -42,6 +42,12 @@ const seededEvaluations=[sampleEvaluation,...people.slice(1,61).map((p,i)=>{cons
 const seed={people,departments,positions,processes,categories,docs,skills,careers,paths:[],sessions:[],feedback:[],requests:[],evaluations:seededEvaluations,onboarding:[],matrix:{id:1,title:'Capacidades del puesto',criteria,revision:1,status:'published'},threads:[],comments:[],preferences:{block_one:'09:00',block_two:'16:00',timezone:'America/Mexico_City',days_json:[1,2,3,4,5]},company:{name:'Horizonte',industry:'Servicios empresariales',country:'México',teamSize:'51-100',version:1},core:[]};
 let state;try{state={...clone(seed),...JSON.parse(localStorage.getItem(KEY)||'null')}}catch{state=clone(seed)}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}},idFor=rows=>Math.max(0,...rows.map(r=>+r.id||0))+1,base=()=>({ok:true,csrf:'demo-local'}),current=()=>state.people.find(p=>p.id===+(new URLSearchParams(location.search).get('previewUser')))||state.people[0];
+// One-time upgrade for browsers whose older demo saved an empty evaluation list.
+// Preserve every existing evaluation and all other locally edited demo data.
+if(state.evaluationExamplesVersion!==1){
+ if(Array.isArray(state.evaluations)&&state.evaluations.length===0){state.evaluations=seededEvaluations.filter(r=>state.people.some(p=>p.id===r.userId&&p.is_active&&p.department===r.snapshot.departmentName&&p.job_title===r.snapshot.positionName)).map(r=>{const p=state.people.find(p=>p.id===r.userId);return {...clone(r),snapshot:{...clone(r.snapshot),personName:p.name}}})}
+ state.evaluationExamplesVersion=1;save();
+}
 const fail=m=>{throw Error(m)},unsupported=()=>fail('Esta acción requiere un servicio externo y no está disponible en el demo. Tus datos de ejemplo se conservan.');
 const user=()=>({...current(),name:current().name,permissions:clone(current().permissions||permissions),can_manage_evaluations:current().role==='admin'});
 const identity=()=>({name:state.company.name,mark:state.company.name.slice(0,1),logo:null});

@@ -43,3 +43,7 @@ Las altas individuales y CSV pueden quedar pendientes de activar sin generar con
 ## Adaptador 1.1.3 · 02 Oct 2026 · 00:16 CDMX
 
 Dashboard, DNC y capacitaciones externas de App V1.50.0. Agrega ocho diagnósticos y tres cursos ficticios al abrir el módulo, sin sustituir personas, evaluaciones ni datos locales existentes. Nuevos ejemplos de evaluación incluyen brechas; las evaluaciones previamente guardadas se conservan. ROI distingue costos y retorno estimados de evidencia validada, con seguimientos acumulados de 30/60/90 días. Correr `node tests/training.cjs`.
+
+## Adaptador 1.1.4 · 02 Oct 2026 · 13:30 CDMX
+
+Migración única para navegadores que guardaron una lista vacía de evaluaciones en una versión anterior. Recupera ejemplos para personas activas cuyo departamento y puesto siguen coincidiendo; conserva nombres editados, empresa, comentarios y todos los demás datos locales. Una lista con evaluaciones existentes se conserva completa. No requiere restablecer el demo.
