@@ -17,3 +17,4 @@ jobs:
       - run: node tests/dossier.cjs
       - run: node tests/plans.cjs
       - run: node tests/person-details.cjs
+      - run: node tests/goals.cjs
