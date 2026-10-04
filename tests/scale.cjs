@@ -8,7 +8,7 @@ function boot(stored={}){
 (async()=>{
  const old={company:{name:'Saved old demo'},people:[{id:1,name:'Old'}]};const env=boot({'oplen-mirror-v1':JSON.stringify(old)}),s=env.context.window.OplenDemo.snapshot();
  const emptySaved=structuredClone(s);emptySaved.company.name='Mi demo personalizado';emptySaved.people[1].name='Nombre editado';emptySaved.evaluations=[];delete emptySaved.evaluationExamplesVersion;emptySaved.feedback=[{id:7,message:'Conservar comentario'}];
- const repaired=boot({'oplen-mirror-scale-v2':JSON.stringify(emptySaved)}),restored=repaired.context.window.OplenDemo.snapshot();assert.equal(restored.evaluations.length,61);assert.equal(restored.company.name,'Mi demo personalizado');assert.equal(restored.people[1].name,'Nombre editado');assert.equal(restored.evaluations.find(r=>r.userId===2).snapshot.personName,'Nombre editado');assert.equal(restored.feedback[0].message,'Conservar comentario');assert.equal((await repaired.fetch('evaluation-runs.php?manage=1')).rows.length,61);
+ const repaired=boot({'oplen-mirror-scale-v2':JSON.stringify(emptySaved)}),restored=repaired.context.window.OplenDemo.snapshot();assert.equal(restored.evaluations.length,61);assert.equal(restored.company.name,'Mi demo personalizado');assert.equal(restored.people[1].name,'Nombre editado');assert.equal(restored.evaluations.find(r=>r.userId===2).snapshot.personName,'Nombre editado');assert.equal(restored.feedback[0].message,'Conservar comentario');assert.equal((await repaired.fetch('evaluation-runs.php?manage=1')).rows.length,restored.evaluations.filter(r=>r.userId!==1).length);
  const edited=structuredClone(s);delete edited.evaluationExamplesVersion;edited.evaluations=[{...edited.evaluations[1],feedback:'Evaluación modificada; conservar',revision:9}];const retained=boot({'oplen-mirror-scale-v2':JSON.stringify(edited)}).context.window.OplenDemo.snapshot();assert.equal(retained.evaluations.length,1);assert.equal(retained.evaluations[0].revision,9);assert.equal(retained.evaluations[0].feedback,'Evaluación modificada; conservar');
  const clearedAfterUpgrade=structuredClone(restored);clearedAfterUpgrade.evaluations=[];assert.equal(boot({'oplen-mirror-scale-v2':JSON.stringify(clearedAfterUpgrade)}).context.window.OplenDemo.snapshot().evaluations.length,0);
  console.log('Empty older evaluation lists upgrade once; existing evaluations, names, company and feedback are preserved.');
@@ -18,9 +18,9 @@ function boot(stored={}){
  for(const d of s.departments){assert.equal(s.people.filter(p=>p.department===d.name).length,d.member_count);assert(s.people.some(p=>p.id===d.manager_user_id&&p.department===d.name));}
  for(const p of s.positions)assert.equal(p.member_count,s.people.filter(u=>u.job_title===p.name&&u.department===p.department_name).length);
  for(const p of s.processes){assert(s.positions.some(pos=>pos.id===p.responsible_position_id));assert(s.people.some(u=>u.id===p.responsible_user_id));p.documents.forEach(id=>assert(s.docs.some(d=>d.id===id)));}
- const dashboard=(await env.fetch('evaluation-runs.php?dashboard=1')).dashboard;
+ const dashboard=(await env.fetch('evaluation-runs.php?manage=1&dashboard=1')).dashboard;
  assert.equal(dashboard.counts.total,99);assert.equal(dashboard.counts.published,40);assert.equal(dashboard.counts.inReview,10);assert.equal(dashboard.counts.draft,10);assert.equal(dashboard.counts.missing,39);assert.equal(dashboard.average,null);
- const filtered=(await env.fetch('evaluation-runs.php?dashboard=1&department=2')).dashboard;assert.equal(filtered.counts.total,10);
+ const filtered=(await env.fetch('evaluation-runs.php?manage=1&dashboard=1&department=2')).dashboard;assert.equal(filtered.counts.total,10);
  const company=(await env.fetch('company.php')).company;assert.equal(company.activeUsers,100);assert.equal(company.departments,10);
  assert.deepEqual(JSON.parse(env.storage.get('oplen-mirror-v1')),old);
  const changed=structuredClone(s);changed.company.name='My saved demo';const persisted=boot({'oplen-mirror-scale-v2':JSON.stringify(changed)});assert.equal(persisted.context.window.OplenDemo.snapshot().company.name,'My saved demo');
