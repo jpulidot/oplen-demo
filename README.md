@@ -59,3 +59,7 @@ Migración única para navegadores que guardaron una lista vacía de evaluacione
 Nuevas sesiones usan el caso ficticio de una solicitud incompleta, cuatro preguntas de comprensión y tres apartados de aplicación. Preguntas: 60 puntos; aplicación: 40 puntos. La aplicación se simula mediante extensión del texto (20 caracteres = parcial; 60 = cumplido), y no valida comprensión ni llama a IA. El resultado lo identifica expresamente como simulación.
 
 Las sesiones anteriores y los cambios locales se conservan. App V1.52.0 comparte estilos, recorrido y resultados con el demo; desplegar primero oplen-master y después demo/backend.js. No requiere reiniciar datos ficticios.
+
+## Evaluación breve · adaptador 1.3.0
+
+Nuevas clases: ocho preguntas cerradas y una aplicación, con reparto 80/20. La valoración escrita continúa simulada por extensión y no valida aprendizaje. Las clases pendientes anteriores ofrecen conversión con copia de su entrega y nota; clases aprobadas conservadas.
