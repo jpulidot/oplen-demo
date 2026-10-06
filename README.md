@@ -52,3 +52,10 @@ Migración única para navegadores que guardaron una lista vacía de evaluacione
 - Fichas del colaborador con evaluaciones publicadas, brechas y DNC/capacitaciones vinculadas exclusivamente a esa persona.
 - Mismos límites de consulta para responsables, vista previa y rutas personales.
 - Las rutas nuevas guardan su propietario; rutas antiguas sin propietario se conservan y no se atribuyen a otra persona.
+
+
+## Career Path por casos · adaptador 1.2.0
+
+Nuevas sesiones usan el caso ficticio de una solicitud incompleta, cuatro preguntas de comprensión y tres apartados de aplicación. Preguntas: 60 puntos; aplicación: 40 puntos. La aplicación se simula mediante extensión del texto (20 caracteres = parcial; 60 = cumplido), y no valida comprensión ni llama a IA. El resultado lo identifica expresamente como simulación.
+
+Las sesiones anteriores y los cambios locales se conservan. App V1.52.0 comparte estilos, recorrido y resultados con el demo; desplegar primero oplen-master y después demo/backend.js. No requiere reiniciar datos ficticios.
