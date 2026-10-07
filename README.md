@@ -63,3 +63,7 @@ Las sesiones anteriores y los cambios locales se conservan. App V1.52.0 comparte
 ## Evaluación breve · adaptador 1.3.0
 
 Nuevas clases: ocho preguntas cerradas y una aplicación, con reparto 80/20. La valoración escrita continúa simulada por extensión y no valida aprendizaje. Las clases pendientes anteriores ofrecen conversión con copia de su entrega y nota; clases aprobadas conservadas.
+
+## Notas privadas · adaptador 1.4.0
+
+Mis notas guarda texto por clase y cuenta en este navegador, conserva revisión y detecta conflictos entre pestañas. Las notas no aparecen en vista previa. El frontend compartido incluye el botón «Enviar para evaluar».
