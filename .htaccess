@@ -6,7 +6,7 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # Always use shared assets, even when an old assets directory still exists.
-  RewriteRule ^assets/([a-zA-Z0-9_-]+\.(css|js|svg))$ asset.php?file=$1 [QSA,L]
+  RewriteRule ^assets/([a-zA-Z0-9_-]+\.(css|js|svg|webp))$ asset.php?file=$1 [QSA,L]
   RewriteRule ^api(?:/.*)?$ - [R=404,L]
   RewriteRule ^(?:tests|scripts)/ - [R=404,L]
 </IfModule>
