@@ -96,3 +96,7 @@ La jerarquía admite iniciativa → proyecto → subproyecto, y rechaza ciclos o
 Se conserva la clave `oplen-demo-projects-v1`; el contenido tiene `version: 2`. Los datos de la versión anterior se adaptan en memoria y se escriben en v2 únicamente al guardar un cambio. No se sustituyen proyectos, tareas, comentarios ni fechas existentes, ni se agrupan automáticamente proyectos anteriores. Los ejemplos nuevos incluyen una iniciativa y un subproyecto. La versión 0.1.0 no lee el formato v2: un rollback debe conservar un lector compatible o retirar el módulo sin borrar la clave.
 
 Pruebas adicionales: `node tests/projects-hybrid.cjs` con jsdom 30.1.1. Cubre creación y movimiento de la jerarquía, ciclos, agregado sin duplicados, contexto de Oplen, lectura segura de documentos y permisos, subtareas, filtros, consulta y migración de datos v1.
+
+## Identificación del despliegue · Demo 1.6.0
+
+El pie de página muestra primero la versión y fecha de publicación de esta demo (zona America/Mexico_City), junto con la versión del módulo Proyectos que realmente se cargó. La versión/fecha de la interfaz compartida se conserva dentro de «Versión de la interfaz base». Los metadatos del demo se mantienen en `demoBuild` de `demo/backend.js`; la versión de Proyectos proviene de `window.OplenProjects.version`. No se atribuye una actualización de la demo a la app compartida.

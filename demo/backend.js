@@ -11,7 +11,7 @@ if (demoScriptURL && location.origin === 'https://demo.oplen.io') {
 }
 const KEY='oplen-mirror-scale-v2',clone=v=>structuredClone(v),now=()=>new Date().toISOString(),permissions=['directory','departments','knowledge','development','evaluations'];
 // Horizonte: fictional service company, 100 active people across ten departments.
-const demoBuild='1.5.0 · 06 Oct 2026 · Mi cuaderno privado';
+const demoBuild={version:'1.6.0',updatedAt:'2026-10-23T20:24:26Z',label:'Multiproyectos y contexto operativo'};
 const deptSpecs=[
  ['Dirección','Directora general','Coordinar la estrategia y alinear las metas de toda la compañía.',['Planeación estratégica','Seguimiento del negocio','Gobierno y decisiones'],'Asistente de dirección','Analista de estrategia','Coordinador ejecutivo'],
  ['Operaciones','Manager de operaciones','Asegurar entregas consistentes, capacidad y mejora continua.',['Planificación de capacidad','Control de calidad','Mejora de procesos'],'Analista de operaciones','Especialista de calidad','Coordinador de proyectos'],
@@ -184,7 +184,25 @@ const nativeFetch=window.fetch.bind(window);window.fetch=async(input,options={})
 // File uploads require a backend; return an explicit demo response instead of sending data.
 const nativeOpen=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(method,url,...args){this._demoUpload=String(url).includes('api/');return nativeOpen.call(this,method,url,...args)};const nativeSend=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(body){if(!this._demoUpload)return nativeSend.call(this,body);Object.defineProperty(this,'status',{value:422,configurable:true});Object.defineProperty(this,'responseText',{value:JSON.stringify({ok:false,error:'La carga de archivos no está disponible en el demo. Puedes probar la edición de texto.'}),configurable:true});this.dispatchEvent(new Event('load'));};
 window.OplenDemo={reset(){if(confirm('¿Restablecer los datos ficticios de este navegador?')){localStorage.removeItem(KEY);localStorage.removeItem('oplen-demo-projects-v1');sessionStorage.clear();location.hash='#/inicio';location.reload()}},snapshot:()=>clone(state)};
-const observer=new MutationObserver(()=>{const footer=document.querySelector('.site-footer');if(footer&&!footer.dataset.demo){footer.dataset.demo='1';const label=footer.querySelector('span');const demoLabel=document.createElement('span');demoLabel.className='build-updated';demoLabel.textContent='Demo · Datos ficticios · Guardado local · '+demoBuild;label.append(demoLabel);const button=document.createElement('button');button.textContent='Restablecer demo';button.onclick=()=>window.OplenDemo.reset();footer.querySelector('div').append(button)}});observer.observe(document.querySelector('#app'),{childList:true,subtree:true});
+// Display the demo release separately from the shared application's build.
+function decorateDemoFooter(footer){
+ if(footer.dataset.demo)return;
+ const label=footer.querySelector(':scope > span'),actions=footer.querySelector(':scope > div');
+ if(!label||!actions)return;
+ footer.dataset.demo=demoBuild.version;
+ const release=document.createElement('div');release.className='demo-release';
+ const title=document.createElement('strong');title.textContent=state.company.name+' · Demo V'+demoBuild.version;release.append(title);
+ const updated=document.createElement('span');updated.className='build-updated';updated.append('Actualización de la demo: ');
+ const time=document.createElement('time');time.dateTime=demoBuild.updatedAt;
+ time.textContent=new Intl.DateTimeFormat('es-MX',{timeZone:'America/Mexico_City',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(demoBuild.updatedAt));
+ updated.append(time,' · CDMX');release.append(updated);
+ const moduleLabel=document.createElement('span');moduleLabel.className='build-updated';moduleLabel.textContent=window.OplenProjects?'Proyectos '+window.OplenProjects.version+' · '+demoBuild.label:'Datos de ejemplo de Oplen';release.append(moduleLabel);
+ const storageLabel=document.createElement('span');storageLabel.className='build-updated';storageLabel.textContent='Datos ficticios · Guardado local en este navegador';release.append(storageLabel);
+ const base=document.createElement('details');base.className='demo-release-base';const summary=document.createElement('summary');summary.textContent='Versión de la interfaz base';base.append(summary,label.cloneNode(true));release.append(base);
+ label.replaceWith(release);
+ const button=document.createElement('button');button.textContent='Restablecer demo';button.onclick=()=>window.OplenDemo.reset();actions.append(button);
+}
+const observer=new MutationObserver(()=>{const footer=document.querySelector('.site-footer');if(footer)decorateDemoFooter(footer)});observer.observe(document.querySelector('#app'),{childList:true,subtree:true});
 })();
 
 
