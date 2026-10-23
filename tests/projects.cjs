@@ -11,7 +11,7 @@ w.structuredClone=structuredClone;w.Response=Response;w.fetch=async()=>{throw ne
 w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
 w.HTMLDialogElement.prototype.close=function(){this.open=false;};
 w.eval(backend);w.eval(moduleSource);
-let context={user:{id:1,name:'Ana Torres'},readOnly:false};
+let context={user:{id:1,name:'Ana Torres',role:'admin',permissions:['departments','knowledge','directory']},readOnly:false};
 const root=w.document.querySelector('#content');
 const mount=()=>w.OplenProjects.mount(root,context);
 const $=s=>{const e=w.document.querySelector(s);assert(e,'Missing '+s);return e;};
@@ -20,9 +20,9 @@ const fill=(s,v)=>{$(s).value=v;};
 const submit=s=>$(s).dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
 const change=(s,v)=>{$(s).value=v;$(s).dispatchEvent(new w.Event('change',{bubbles:true}));};
 const data=()=>JSON.parse(w.localStorage.getItem(KEY));
-mount();assert.equal(data().tasks.length,12);assert.equal(data().projects.length,3);assert.equal(root.querySelectorAll('tbody tr').length,12);
+mount();assert.equal(data().tasks.length,12);assert.equal(data().projects.length,4);assert(root.querySelector('.pw-portfolio'));click('[data-pw-view="list"]');assert.equal(root.querySelectorAll('tbody tr').length,12);
 click('[data-pw-action="new-project"]');fill('#pw-project-form [name="name"]','Proyecto QA');fill('#pw-project-form [name="owner"]','1');submit('#pw-project-form');
-assert.equal(data().projects.length,4);assert.equal(root.querySelector('.pw-work-head h2').textContent,'Proyecto QA');
+assert.equal(data().projects.length,5);assert.equal(root.querySelector('.pw-work-head h2').textContent,'Proyecto QA');
 click('[data-pw-action="new-task"]');fill('#pw-task-form [name="title"]','<img src=x onerror=alert(1)> Validar entrega');fill('#pw-task-form [name="owner"]','1');fill('#pw-task-form [name="priority"]','high');fill('#pw-task-form [name="due"]','2026-11-01');fill('#pw-new-check','Primera comprobación');click('[data-pw-action="add-check"]');submit('#pw-task-form');
 assert.equal(data().tasks.length,13);let task=data().tasks.at(-1);assert.equal(task.owner,1);assert.equal(task.checklist.length,1);assert(!root.querySelector('img'));
 click('[data-pw-open="'+task.id+'"]');fill('#pw-task-form [name="comment"]','Comentario local de QA');change('[data-pw-check]',true); // checked assignment follows
@@ -31,12 +31,12 @@ assert.equal(data().tasks.at(-1).comments.length,1);assert.equal(data().tasks.at
 change('[data-pw-status="'+task.id+'"]','done');assert.equal(data().tasks.at(-1).status,'done');
 mount();assert.equal(data().tasks.length,13);assert.equal(data().tasks.at(-1).status,'done');
 click('[data-pw-view="board"]');assert.equal(root.querySelectorAll('.pw-column').length,4);assert(root.querySelector('[data-pw-drop="done"] [data-pw-drag="'+task.id+'"]'));
-click('[data-pw-project="all"]');change('[data-pw-filter="priority"]','urgent');assert.equal(root.querySelectorAll('.pw-task-card').length,2);
-click('[data-pw-action="clear-filters"]');click('[data-pw-project="mine"]');assert.equal(root.querySelectorAll('.pw-task-card').length,1);
+click('[data-pw-project="all"]');click('[data-pw-view="board"]');change('[data-pw-filter="priority"]','urgent');assert.equal(root.querySelectorAll('.pw-task-card').length,2);
+click('[data-pw-action="clear-filters"]');click('[data-pw-project="mine"]');click('[data-pw-view="board"]');assert.equal(root.querySelectorAll('.pw-task-card').length,1);
 click('[data-pw-open="'+task.id+'"]');click('[data-pw-action="archive-task"]');assert(data().tasks.at(-1).archived);click('[data-pw-project="archive"]');click('[data-pw-view="list"]');click('[data-pw-action="restore"]');assert.equal(data().tasks.at(-1).archived,false);
-click('[data-pw-project="all"]');click('[data-pw-open="'+task.id+'"]');fill('#pw-task-form [name="title"]','Should not overwrite');let concurrent=data();concurrent.revision++;concurrent.tasks[0].title='Changed elsewhere';w.localStorage.setItem(KEY,JSON.stringify(concurrent));submit('#pw-task-form');assert.equal(data().tasks[0].title,'Changed elsewhere');assert.notEqual(data().tasks.at(-1).title,'Should not overwrite');assert.match($('[data-pw-error]').textContent,/otra pestaña/);click('[data-pw-action="cancel"]');mount();
+click('[data-pw-project="all"]');click('[data-pw-view="list"]');click('[data-pw-open="'+task.id+'"]');fill('#pw-task-form [name="title"]','Should not overwrite');let concurrent=data();concurrent.revision++;concurrent.tasks[0].title='Changed elsewhere';w.localStorage.setItem(KEY,JSON.stringify(concurrent));submit('#pw-task-form');assert.equal(data().tasks[0].title,'Changed elsewhere');assert.notEqual(data().tasks.at(-1).title,'Should not overwrite');assert.match($('[data-pw-error]').textContent,/otra pestaña/);click('[data-pw-action="cancel"]');mount();
 // Storage failures must leave the form and old data intact.
-click('[data-pw-action="new-project"]');fill('#pw-project-form [name="name"]','Quota failure');const oldSet=w.Storage.prototype.setItem;w.Storage.prototype.setItem=function(){throw new Error('Storage full');};submit('#pw-project-form');assert.equal(data().projects.length,4);assert.match($('[data-pw-error]').textContent,/Storage full/);w.Storage.prototype.setItem=oldSet;click('[data-pw-action="cancel"]');
+click('[data-pw-action="new-project"]');fill('#pw-project-form [name="name"]','Quota failure');const oldSet=w.Storage.prototype.setItem;w.Storage.prototype.setItem=function(){throw new Error('Storage full');};submit('#pw-project-form');assert.equal(data().projects.length,5);assert.match($('[data-pw-error]').textContent,/Storage full/);w.Storage.prototype.setItem=oldSet;click('[data-pw-action="cancel"]');
 context={...context,readOnly:true};mount();assert.equal(root.querySelectorAll('[data-pw-action="new-task"]').length,0);assert([...root.querySelectorAll('[data-pw-status]')].every(s=>s.disabled));click('[data-pw-open="'+task.id+'"]');assert($('#pw-task-form fieldset').disabled);assert(!w.document.querySelector('#pw-task-form [type="submit"]'));click('[data-pw-action="cancel"]');
 // Corrupt state is not overwritten with seed data.
 w.localStorage.setItem(KEY,'{broken');mount();assert.equal(w.localStorage.getItem(KEY),'{broken');assert(root.querySelector('[role="alert"]'));

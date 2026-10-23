@@ -83,3 +83,16 @@ Rollback: revertir el commit del prototipo y desplegar. La interfaz compartida o
 ### Entrada pública y carpeta del despliegue
 
 La instalación actual de Hostinger despliega este repo dentro de `/demo/`. El dominio conserva una portada anterior que carga `/demo/demo/backend.js`. El adaptador reconoce exclusivamente esa combinación en `demo.oplen.io` y redirige la portada `/` o `/index.php` a `/demo/`, conservando la consulta y la ruta de pantalla. La demo sigue en el mismo origen y conserva sus datos locales. Una instalación en raíz, otros dominios y la entrada canónica no se redirigen. El adaptador se sirve con revalidación de caché. Prueba: `node tests/entry-routing.cjs`.
+
+
+## Proyectos conectados · prototipo 0.2.0 · 23 Oct 2026
+
+El módulo combina la organización flexible de Command con el contexto de Oplen. Incluye una vista general de proyectos, resumen por proyecto/iniciativa, progreso acumulado sin duplicar tareas, lista y tablero, filtros por persona/departamento/prioridad/fecha, y navegación compacta con iniciativas y subproyectos opcionales. Un proyecto puede involucrar a varios departamentos; el departamento no es una carpeta obligatoria.
+
+Cada tarea abre un panel lateral que consulta los colaboradores, puestos, actividades publicadas y documentos de Oplen. La responsabilidad operativa conserva su alcance, autoridad y escalamiento; la tarea conserva su entrega, fechas y estado. Los documentos publicados se leen dentro del contexto; contenido con bloques abre el lector existente en otra pestaña. Se respetan los permisos de Operación y Documentación y la visibilidad del documento. Las subtareas tienen responsable, estado y fecha propios y aparecen mediante su tarea principal en Mi trabajo cuando están pendientes y asignadas a la persona.
+
+La jerarquía admite iniciativa → proyecto → subproyecto, y rechaza ciclos o niveles adicionales. El avance se calcula con tareas principales activas, no con subtareas; completar una tarea no cambia automáticamente las subtareas. Las solicitudes y automatizaciones quedan fuera de este bloque.
+
+Se conserva la clave `oplen-demo-projects-v1`; el contenido tiene `version: 2`. Los datos de la versión anterior se adaptan en memoria y se escriben en v2 únicamente al guardar un cambio. No se sustituyen proyectos, tareas, comentarios ni fechas existentes, ni se agrupan automáticamente proyectos anteriores. Los ejemplos nuevos incluyen una iniciativa y un subproyecto. La versión 0.1.0 no lee el formato v2: un rollback debe conservar un lector compatible o retirar el módulo sin borrar la clave.
+
+Pruebas adicionales: `node tests/projects-hybrid.cjs` con jsdom 30.1.1. Cubre creación y movimiento de la jerarquía, ciclos, agregado sin duplicados, contexto de Oplen, lectura segura de documentos y permisos, subtareas, filtros, consulta y migración de datos v1.
