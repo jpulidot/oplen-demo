@@ -10,3 +10,10 @@ DirectoryIndex index.php
   RewriteRule ^api(?:/.*)?$ - [R=404,L]
   RewriteRule ^(?:tests|scripts)/ - [R=404,L]
 </IfModule>
+
+# The legacy domain entry also loads this adapter; always revalidate it.
+<IfModule mod_headers.c>
+  <Files "backend.js">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </Files>
+</IfModule>

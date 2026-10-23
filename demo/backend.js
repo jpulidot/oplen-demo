@@ -1,4 +1,14 @@
 (()=>{'use strict';
+// The legacy domain entry loads this adapter from the nested Git checkout.
+// Send that entry to the checkout's own index, where routes/assets stay in sync.
+const demoScriptURL = document.currentScript?.src;
+if (demoScriptURL && location.origin === 'https://demo.oplen.io') {
+ const checkoutURL = new URL('../', demoScriptURL);
+ if (checkoutURL.origin === location.origin && checkoutURL.pathname === '/demo/' && ['/', '/index.php'].includes(location.pathname)) {
+  location.replace(checkoutURL.pathname + location.search + (location.hash || '#/inicio'));
+  return;
+ }
+}
 const KEY='oplen-mirror-scale-v2',clone=v=>structuredClone(v),now=()=>new Date().toISOString(),permissions=['directory','departments','knowledge','development','evaluations'];
 // Horizonte: fictional service company, 100 active people across ten departments.
 const demoBuild='1.5.0 · 06 Oct 2026 · Mi cuaderno privado';

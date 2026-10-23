@@ -79,3 +79,7 @@ El módulo usa `oplen-demo-projects-v1` en localStorage. Los datos no se sincron
 Pruebas: `node --check demo/projects.js`, `php tests/projects-bridge.php` y `node tests/projects.cjs` (jsdom 30.1.1; Node 22). Cubren guardado local, relaciones, filtros, tablero, subtareas, comentarios, archivo/restauración, conflictos entre pestañas, almacenamiento lleno, vista de consulta y texto no confiable.
 
 Rollback: revertir el commit del prototipo y desplegar. La interfaz compartida original vuelve a servirse y la clave de proyectos queda intacta hasta que se restablezca la demo. No requiere migración de base de datos.
+
+### Entrada pública y carpeta del despliegue
+
+La instalación actual de Hostinger despliega este repo dentro de `/demo/`. El dominio conserva una portada anterior que carga `/demo/demo/backend.js`. El adaptador reconoce exclusivamente esa combinación en `demo.oplen.io` y redirige la portada `/` o `/index.php` a `/demo/`, conservando la consulta y la ruta de pantalla. La demo sigue en el mismo origen y conserva sus datos locales. Una instalación en raíz, otros dominios y la entrada canónica no se redirigen. El adaptador se sirve con revalidación de caché. Prueba: `node tests/entry-routing.cjs`.
