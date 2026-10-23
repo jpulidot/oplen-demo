@@ -67,3 +67,15 @@ Nuevas clases: ocho preguntas cerradas y una aplicación, con reparto 80/20. La 
 ## Notas privadas · adaptador 1.4.0
 
 Mis notas guarda texto por clase y cuenta en este navegador, conserva revisión y detecta conflictos entre pestañas. Las notas no aparecen en vista previa. El frontend compartido incluye el botón «Enviar para evaluar».
+
+## Proyectos y tareas · prototipo 0.1.0 · 23 Oct 2026
+
+Disponible exclusivamente en demo.oplen.io, ruta `#/proyectos`. Proyectos, tareas, responsables del equipo ficticio, prioridades, fechas, estados, lista y tablero con arrastre. Cada tarea puede vincular una actividad de Operación y conservar subtareas, comentarios e historial. Las tareas se archivan y restauran.
+
+El módulo usa `oplen-demo-projects-v1` en localStorage. Los datos no se sincronizan entre personas o dispositivos, no envían notificaciones y no conectan con ClickUp. Las vistas previas de colaboradores son de consulta. Restablecer demo elimina también este conjunto de prueba; no cambia los servicios reales.
+
+`index.php` añade CSS/JS propios y `asset.php` aplica `demo/projects-bridge.php` al JavaScript compartido únicamente dentro de esta demo. La app de producción y la demo de oplenteams.io no se modifican. El adaptador verifica todos sus puntos de inserción antes de transformar la respuesta; ante un frontend incompatible, devuelve la fuente original y no añade la navegación del módulo. El ETag refleja los bytes transformados.
+
+Pruebas: `node --check demo/projects.js`, `php tests/projects-bridge.php` y `node tests/projects.cjs` (jsdom 30.1.1; Node 22). Cubren guardado local, relaciones, filtros, tablero, subtareas, comentarios, archivo/restauración, conflictos entre pestañas, almacenamiento lleno, vista de consulta y texto no confiable.
+
+Rollback: revertir el commit del prototipo y desplegar. La interfaz compartida original vuelve a servirse y la clave de proyectos queda intacta hasta que se restablezca la demo. No requiere migración de base de datos.

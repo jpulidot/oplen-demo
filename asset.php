@@ -9,7 +9,12 @@ $types = ['css'=>'text/css', 'js'=>'application/javascript', 'svg'=>'image/svg+x
 header('Content-Type: '.$types[pathinfo($name, PATHINFO_EXTENSION)].'; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-cache');
-$etag = '"'.hash_file('sha256', $file).'"';
+$content = file_get_contents($file);
+if ($name === 'app.js') {
+    require_once __DIR__.'/demo/projects-bridge.php';
+    $content = oplen_demo_projects_source($content);
+}
+$etag = '"'.hash('sha256', $content).'"';
 header('ETag: '.$etag);
 if (($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) { http_response_code(304); exit; }
-readfile($file);
+echo $content;

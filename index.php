@@ -20,11 +20,15 @@ foreach (glob($sharedApp.'/assets/*') ?: [] as $asset) {
     if (is_file($asset) && preg_match('/\.(css|js|svg)$/D', $asset)) hash_update_file($fingerprint, $asset);
 }
 hash_update_file($fingerprint, __DIR__.'/'.$demoBackendHref);
+foreach (['demo/projects.js', 'demo/projects.css', 'demo/projects-bridge.php'] as $localAsset) hash_update_file($fingerprint, __DIR__.'/'.$localAsset);
 $assetVersion = 'shared-'.substr(hash_final($fingerprint), 0, 16);
 header('Cache-Control: no-store');
 header("Content-Security-Policy: default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");
 ob_start();
 require $sharedApp.'/frontend.php';
 $frontendHtml = ob_get_clean();
-// Keep the shared UI intact; resolve only the local mock script location.
+// Load the isolated project module before the shared application boots.
+$frontendHtml = str_replace('</head>', '<link rel="stylesheet" href="demo/projects.css?v='.$assetVersion.'"></head>', $frontendHtml);
+$frontendHtml = str_replace('<script src="assets/app.js?', '<script src="demo/projects.js?v='.$assetVersion.'" defer></script><script src="assets/app.js?', $frontendHtml);
+// Resolve the local mock script location.
 echo str_replace('src="demo/backend.js?', 'src="'.htmlspecialchars($demoBackendHref, ENT_QUOTES, 'UTF-8').'?', $frontendHtml);
