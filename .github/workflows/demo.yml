@@ -21,6 +21,7 @@ jobs:
       - run: node tests/evaluation-access.cjs
       - name: Projects module syntax and PHP bridge
         run: |
+          node --check demo/personal.js
           node --check demo/projects.js
           php -l index.php
           php -l asset.php
@@ -28,6 +29,7 @@ jobs:
       - name: Projects interactions and persistence
         run: |
           npm install --no-save --ignore-scripts jsdom@30.1.1
+          node tests/personal-system.cjs
           node tests/assistant.cjs
           node tests/projects-personal.cjs
           node tests/projects.cjs

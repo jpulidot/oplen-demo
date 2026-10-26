@@ -5,19 +5,25 @@ document.body.append(root);
 const panel=root.querySelector('.oa-panel'),launcher=root.querySelector('.oa-launch'),input=root.querySelector('input'),log=root.querySelector('.oa-log');
 function open(value){panel.hidden=!value;launcher.setAttribute('aria-expanded',String(value));launcher.setAttribute('aria-label',value?'Cerrar asistente Oplen':'Abrir asistente Oplen');(value?input:launcher).focus();}
 launcher.onclick=()=>open(panel.hidden);root.querySelector('.oa-close').onclick=()=>open(false);root.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){e.preventDefault();open(false);}});
+window.addEventListener('oplen-space-change',()=>{log.replaceChildren();message('Cambiaste de espacio. Las próximas consultas usan únicamente los datos de este espacio.');});
 const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function message(text,mine=false){const el=document.createElement('p');el.className='oa-message'+(mine?' oa-mine':'');el.textContent=text;log.append(el);while(log.children.length>40)log.firstElementChild.remove();log.scrollTop=log.scrollHeight;}
 function answer(query){
  const data=window.OplenProjects?.assistantContext();if(!data)return 'Abre Inicio o Proyectos para cargar tu espacio y vuelve a consultar.';
- const {tasks,projects,user}=data,active=tasks.filter(t=>!t.archived&&t.status!=='done'),q=normalize(query);
+ const {tasks,projects,user,personal}=data,active=tasks.filter(t=>!t.archived&&t.status!=='done'),q=normalize(query);
  const projectName=t=>projects.find(p=>p.id===t.project)?.name||'Proyecto';
  const list=rows=>rows.slice(0,6).map(t=>'• '+t.title+' · '+projectName(t)+(t.due?' · '+t.due:' · Sin fecha')).join('\n');
- if(/bloque|impide/.test(q)){const rows=active.filter(t=>t.blockedReason);return rows.length?`${rows.length} tareas bloqueadas en tus proyectos:\n${rows.slice(0,6).map(t=>'• '+t.title+': '+t.blockedReason).join('\n')}`:'No hay tareas activas con un bloqueo registrado.';}
+ if(/objetivo|meta/.test(q)){const rows=personal?.goals||[];return rows.length?rows.map(g=>'• '+g.title+': '+g.current+'/'+g.target+' '+g.unit+(g.due?' · '+g.due:'')).join('\n'):'Todavía no hay objetivos. Puedes crearlos desde Inicio → Objetivos.';}
+ if(/acuerdo|espera|compromiso/.test(q)){const rows=(personal?.agreements||[]).filter(a=>!a.done);return rows.length?rows.map(a=>'• '+a.title+' · Esperando a '+a.person+' · '+(a.due||'Sin fecha')).join('\n'):'No hay acuerdos pendientes en este espacio.';}
+ if(/bandeja|captura/.test(q))return 'Tienes '+(personal?.inbox||[]).filter(i=>!i.archived&&!i.converted).length+' capturas por organizar. Abre Bandeja para convertirlas en tareas, proyectos o notas.';
+ if(/semana|priorizo/.test(q)){const priorities=Object.entries(personal?.weeks||{}).sort(([a],[b])=>b.localeCompare(a))[0]?.[1]?.priorities||[];const rows=tasks.filter(t=>priorities.includes(t.id)&&!t.archived&&t.status!=='done');return rows.length?'Tus prioridades guardadas:\n'+list(rows):'No hay prioridades pendientes guardadas. Elígelas en Inicio → Mi semana.';}
+ if(/nota/.test(q)){const rows=(personal?.notes||[]).filter(n=>!n.archived);return rows.length?'Notas del espacio:\n'+rows.slice(0,8).map(n=>'• '+n.title).join('\n'):'Todavía no hay notas en este espacio.';}
+ if(/bloque|impide/.test(q)){const rows=active.filter(t=>t.blockedReason);return rows.length?`${rows.length} ${rows.length===1?'tarea bloqueada':'tareas bloqueadas'} en tus proyectos:\n${rows.slice(0,6).map(t=>'• '+t.title+': '+t.blockedReason).join('\n')}`:'No hay tareas activas con un bloqueo registrado.';}
  if(/pendiente|hoy|prioridad|hacer/.test(q)){const rows=active.filter(t=>String(t.owner)===String(user.id)||t.checklist?.some(c=>!c.done&&String(c.owner)===String(user.id))).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));return rows.length?`Tienes ${rows.length} tareas con trabajo pendiente asignado a ti. Primero las fechas más cercanas:\n${list(rows)}`:'No tienes tareas pendientes asignadas a ti. Tus proyectos pueden tener trabajo asignado a otros participantes; puedes revisarlo desde Proyectos.';}
  const matches=projects.filter(p=>normalize(p.name).includes(q)||q.includes(normalize(p.name)));
  if(matches.length){return matches.slice(0,4).map(p=>{const rows=tasks.filter(t=>t.project===p.id&&!t.archived);return p.name+'\n'+rows.filter(t=>t.status==='done').length+' de '+rows.length+' tareas completadas.\n'+list(rows.filter(t=>t.status!=='done'));}).join('\n\n');}
  if(/resumen|proyecto|avance/.test(q))return `${projects.length} proyectos · ${active.length} tareas abiertas · ${active.filter(t=>t.blockedReason).length} bloqueadas.\n\n${projects.slice(0,6).map(p=>'• '+p.name).join('\n')}\n\nEscribe el nombre de un proyecto para consultar su avance.`;
- return 'En esta demo puedo consultar pendientes, bloqueos y avances por nombre de proyecto. La conversación libre con IA todavía no está conectada.';
+ return 'En esta demo puedo consultar pendientes, bloqueos, objetivos, acuerdos, notas y prioridades semanales. La conversación libre con IA todavía no está conectada.';
 }
 function send(text){text=text.trim();if(!text)return;message(text,true);input.value='';try{message(answer(text));}catch{message('No pude leer los proyectos guardados. Abre Proyectos para comprobar su estado.');}input.focus();}
 root.querySelector('form').onsubmit=e=>{e.preventDefault();send(input.value);};root.querySelectorAll('.oa-suggestions button').forEach(b=>b.onclick=()=>send(b.textContent));

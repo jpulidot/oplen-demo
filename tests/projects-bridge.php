@@ -18,7 +18,7 @@ const markup=`<b>${esc(company.name)} OS</b><small>Espacio de trabajo</small><bu
 function icon(){const paths={home:'M3 10'};return paths;}
 JS;
 $patched = oplen_demo_projects_source($source);
-if ($patched === $source || !str_contains($patched,"projects:'proyectos'") || !str_contains($patched,'window.OplenProjects.mount')) throw new RuntimeException('Module route was not installed');
+if ($patched === $source || !str_contains($patched,"projects:'proyectos'") || !str_contains($patched,'window.OplenPersonal.mount')) throw new RuntimeException('Module route was not installed');
 if (oplen_demo_projects_source('unknown app source') !== 'unknown app source') throw new RuntimeException('Unknown source must remain intact');
 if (oplen_demo_projects_source($patched) !== $patched) throw new RuntimeException('Adapter must not double-patch');
 $missing = str_replace('function currentScreenLabel(){','function label(){',$source);
