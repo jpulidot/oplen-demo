@@ -145,7 +145,14 @@
     }
     return result;
   }
-  function load(){state=read();if(!state){state=seed();localStorage.setItem(KEY,JSON.stringify(state));}}
+  function load(){
+    state=read();
+    if(!state){state=seed();appendDemoExamples(state);if(!context.readOnly)localStorage.setItem(KEY,JSON.stringify(state));return;}
+    // Older demos had independent projects only. Add examples once, without moving or replacing their work.
+    if(!context.readOnly&&!state.initiatives.length&&!state.demoExamplesVersion){
+      try{commit(appendDemoExamples);}catch(err){notify('No pudimos cargar los ejemplos. Tus proyectos se conservan. '+err.message,true);}
+    }
+  }
   function notify(message,error=false){
     document.querySelector('.pw-toast')?.remove();
     const node=document.createElement('div');node.className='pw-toast'+(error?' pw-error':'');node.setAttribute('role',error?'alert':'status');node.textContent=message;document.body.append(node);setTimeout(()=>node.remove(),5500);
@@ -496,6 +503,21 @@
   const templateDate=(start,offset)=>{const d=new Date(start+'T12:00:00');d.setDate(d.getDate()+offset);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
   const uniqueName=(name,items)=>{let n=name,i=2;while(items.some(p=>p.name.toLocaleLowerCase()===n.toLocaleLowerCase()))n=name+' ('+(i++)+')';return n;};
   const availableInitiative=i=>i&&['active','paused'].includes(initiativeStatus(i));
+  const missingDemoExamples=next=>PROJECT_TEMPLATES.filter(t=>!next.projects.some(p=>p.templateId===t.id));
+  function templateTasks(t,projectId,start,ownerFor){
+    return t.tasks.map(s=>({id:uid(),project:projectId,title:s.title,description:s.description,status:'todo',owner:ownerFor(s),due:templateDate(start,s.offset),priority:s.priority,activity:activity(s.activity)?.id||null,checklist:s.checklist.map(title=>({id:uid(),title,status:'todo',done:false,owner:null,due:''})),comments:[],history:[{body:'Creada desde la plantilla «'+t.name+'»',at:now()}],archived:false,createdAt:now(),updatedAt:now(),sourceTemplateId:t.id}));
+  }
+  function appendDemoExamples(next){
+    const start=day(7);
+    for(const t of missingDemoExamples(next)){
+      const owner=activeOwner(t.owner)?t.owner:null,due=templateDate(start,Math.max(...t.tasks.map(s=>s.offset)));
+      let group=next.initiatives.find(i=>i.name.toLocaleLowerCase()===t.initiative.toLocaleLowerCase()&&availableInitiative(i));
+      if(!group){group={id:uid(),name:uniqueName(t.initiative,next.initiatives),description:t.description,owner,due,color:t.color,icon:t.icon,status:'active'};next.initiatives.push(group);}
+      const p={id:uid(),name:uniqueName(t.name,next.projects),description:t.description,owner,due,startDate:start,color:t.color,parentId:null,initiativeId:group.id,templateId:t.id};
+      next.projects.push(p);next.tasks.push(...templateTasks(t,p.id,start,s=>activeOwner(s.owner)?s.owner:null));
+    }
+    next.demoExamplesVersion=1;
+  }
   const templateParents=()=>state.projects.filter(p=>!p.parentId&&(!initiativeFor(p)||availableInitiative(initiativeFor(p))));
   function templateDestination(t){
     const current=project(filter.project),parent=current&&(parentProject(current)||current);
@@ -505,7 +527,8 @@
   }
   function openTemplates(){
     if(context.readOnly)return;
-    const d=modal('Plantillas de proyecto',`<section class="pw-template-library"><p class="pw-template-intro">Elige un ejemplo para explorar Oplen. Cada plantilla crea un proyecto editable con tareas, subtareas y fechas a partir del día que elijas.</p><div class="pw-template-grid">${PROJECT_TEMPLATES.map(t=>`<article><div class="pw-template-card-top">${identity(t)}<span class="pw-overline">${esc(t.category)}</span></div><h3>${esc(t.name)}</h3><p>${esc(t.description)}</p><div class="pw-template-meta"><span>${t.tasks.length} tareas · ${t.tasks.reduce((n,s)=>n+s.checklist.length,0)} subtareas</span><span>Plazo sugerido: ${Math.max(...t.tasks.map(s=>s.offset))} días</span></div>${button('preview-template','Ver plantilla →',`data-pw-template="${t.id}" aria-label="Ver plantilla: ${esc(t.name)}"`,'secondary')}</article>`).join('')}</div><footer class="pw-dialog-actions">${button('cancel','Cerrar')}</footer></section>`,true);
+    const d=modal('Plantillas de proyecto',`<section class="pw-template-library"><p class="pw-template-intro">Elige un ejemplo para explorar Oplen. Cada plantilla crea un proyecto editable con tareas, subtareas y fechas a partir del día que elijas.</p><div class="pw-template-grid">${PROJECT_TEMPLATES.map(t=>`<article><div class="pw-template-card-top">${identity(t)}<span class="pw-overline">${esc(t.category)}</span></div><h3>${esc(t.name)}</h3><p>${esc(t.description)}</p><div class="pw-template-meta"><span>${t.tasks.length} tareas · ${t.tasks.reduce((n,s)=>n+s.checklist.length,0)} subtareas</span><span>Plazo sugerido: ${Math.max(...t.tasks.map(s=>s.offset))} días</span></div>${button('preview-template','Ver plantilla →',`data-pw-template="${t.id}" aria-label="Ver plantilla: ${esc(t.name)}"`,'secondary')}</article>`).join('')}</div><footer class="pw-dialog-actions">${missingDemoExamples(state).length?button('load-demo-examples','Cargar todos los ejemplos','','primary'):''}${button('cancel','Cerrar')}</footer></section>`,true);
+    const loadAll=d.querySelector('[data-pw-action="load-demo-examples"]');if(loadAll)loadAll.onclick=()=>{if(!missingDemoExamples(state).length)return;try{commit(appendDemoExamples);closeDialog();filter.project='portfolio';portfolio.status='all';portfolio.search='';render();notify('Los ejemplos ya están en tu portafolio.');}catch(err){notify(err.message,true);}};
     d.querySelector('[data-pw-action="cancel"]').onclick=closeDialog;d.querySelectorAll('[data-pw-template]').forEach(b=>b.onclick=()=>openTemplate(b.dataset.pwTemplate));
   }
   function openTemplate(id){
@@ -528,7 +551,7 @@
         if(next.projects.some(p=>p.name.toLocaleLowerCase()===v.name.toLocaleLowerCase()))throw new Error('Ya existe un proyecto con ese nombre. Cambia el nombre para crear otra copia.');
         if(newInitiative)next.initiatives.push(newInitiative);
         next.projects.push({id:target,name:v.name,description:v.description.trim(),owner:v.owner?Number(v.owner):null,due:templateDate(v.start,Math.max(...t.tasks.map(s=>s.offset))),startDate:v.start,color:t.color,parentId,initiativeId,templateId:t.id});
-        next.tasks.push(...t.tasks.map(s=>({id:uid(),project:target,title:s.title,description:s.description,status:'todo',owner:ownerFor(s,v),due:templateDate(v.start,s.offset),priority:s.priority,activity:activity(s.activity)?.id||null,checklist:s.checklist.map(title=>({id:uid(),title,status:'todo',done:false,owner:null,due:''})),comments:[],history:[{body:'Creada desde la plantilla «'+t.name+'»',at:now()}],archived:false,createdAt:now(),updatedAt:now(),sourceTemplateId:t.id})));
+        next.tasks.push(...templateTasks(t,target,v.start,s=>ownerFor(s,v)));
       });
       committed=true;filter.project=target;filter.view='summary';clearFilters();if(parentId)collapsed.delete(parentId);if(initiativeId)collapsed.delete('initiative:'+initiativeId);closeDialog();render();notify('Proyecto de ejemplo creado con '+t.tasks.length+' tareas.');
     }catch(err){errorForm(form,err.message);}};
@@ -578,5 +601,5 @@
   }
   window.addEventListener('storage',e=>{if(e.key!==KEY)return;if(dialog){notify('Hay cambios en otra pestaña. Tu formulario sigue abierto; recarga antes de guardar.',true);return;}try{if(host?.isConnected){state=read();if(state)render();else host.innerHTML='<p role="status">La demo se restableció en otra pestaña. Recarga para continuar.</p>';}}catch(err){notify(err.message,true);}});
   window.addEventListener('hashchange',closeDialog);
-  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.6.1'};
+  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.6.2'};
 })();

@@ -17,6 +17,7 @@ const data=()=>JSON.parse(w.localStorage.getItem(KEY));
 const stateIs=k=>assert.equal($('.pw-health-panel').dataset.pwHealthState,k);
 const scope=id=>click('[data-pw-project="'+id+'"]');
 const why=()=>click('[data-pw-action="view-health"]');
+w.localStorage.setItem(KEY,JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/projects-before-examples.json'),'utf8'))));
 mount();const fixture=data();assert.equal(fixture.version,3);assert.equal(cssErrors.length,0);assert(w.document.styleSheets[0].cssRules.length>100);
 const base=()=>{const d=structuredClone(fixture);d.requests=[];d.tasks=[{...d.tasks[0],id:'health-task',project:'help-center',title:'Entrega verificable',status:'todo',owner:32,due:'2026-11-10',checklist:[],blockedReason:'',archived:false}];d.projects.forEach(p=>p.due='2026-11-20');d.initiatives.forEach(i=>i.due='2026-11-25');return d;};
 const put=(edit=()=>{})=>{const d=base();edit(d);w.localStorage.setItem(KEY,JSON.stringify(d));mount();scope('help-center');};

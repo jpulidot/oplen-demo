@@ -10,6 +10,7 @@ const $=s=>{const e=w.document.querySelector(s);assert(e,'Missing '+s);return e;
 const send=(action='save',form=$('#pw-request-form'))=>{let b=form.querySelector('[data-pw-decision="'+action+'"]');if(!b){b=w.document.createElement('button');b.dataset.pwDecision=action;}form.dispatchEvent(new w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:b}));};
 const close=()=>click('[data-pw-action="cancel"]');
 const view=(scope='all',work='requests')=>{click('[data-pw-project="'+scope+'"]');click('[data-pw-view="list"]');if(scope!=='archive')change('[data-pw-filter="work"]',work);};
+w.localStorage.setItem(KEY,JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/projects-before-examples.json'),'utf8'))));
 mount();assert.equal(data().version,3);assert.equal(data().requests.length,3);assert.equal(data().tasks.length,12);
 const factory=data();
 // Intake belongs to a project and keeps the actual creator, type, priority and operational link.

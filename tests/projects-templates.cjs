@@ -10,6 +10,7 @@ const click=s=>$(s).click(),fill=(s,v)=>{$(s).value=v;},change=(s,v)=>{fill(s,v)
 const home=()=>{if(!root.querySelector('.pw-portfolio-home'))click('[data-pw-project="portfolio"]');};
 const gallery=()=>{home();click('[data-pw-action="project-templates"]');};
 const preview=id=>{gallery();click('[data-pw-template="'+id+'"]');};
+w.localStorage.setItem(KEY,JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/projects-before-examples.json'),'utf8'))));
 mount();const initial=data();assert.equal(errors.length,0);gallery();assert.equal(w.document.querySelectorAll('[data-pw-template]').length,6);assert.equal(w.localStorage.getItem(KEY),JSON.stringify(initial));click('[data-pw-action="cancel"]');
 // Every example creates a complete, editable project with unique task/subtask identities.
 const amounts={launch:5,onboarding:5,content:5,'help-center':5,process:5,event:6};

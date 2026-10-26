@@ -20,6 +20,7 @@ const fill=(s,v)=>{$(s).value=v;};
 const submit=s=>$(s).dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
 const change=(s,v)=>{$(s).value=v;$(s).dispatchEvent(new w.Event('change',{bubbles:true}));};
 const data=()=>JSON.parse(w.localStorage.getItem(KEY));
+w.localStorage.setItem(KEY,JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/projects-before-examples.json'),'utf8'))));
 mount();assert.equal(data().tasks.length,12);assert.equal(data().projects.length,4);assert(root.querySelector('.pw-portfolio'));click('[data-pw-view="list"]');assert.equal(root.querySelectorAll('tbody tr').length,12);
 click('[data-pw-action="new-project"]');fill('#pw-project-form [name="name"]','Proyecto QA');fill('#pw-project-form [name="owner"]','1');submit('#pw-project-form');
 assert.equal(data().projects.length,5);assert.equal(root.querySelector('.pw-work-head h2').textContent,'Proyecto QA');

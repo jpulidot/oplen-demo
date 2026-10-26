@@ -1,0 +1,613 @@
+{
+  "version": 3,
+  "revision": 0,
+  "initiatives": [
+    {
+      "id": "customer-experience",
+      "name": "Experiencia del cliente",
+      "description": "Conectar el lanzamiento con una atención clara y consistente.",
+      "owner": 1,
+      "due": "2026-11-25",
+      "color": "green"
+    }
+  ],
+  "projects": [
+    {
+      "id": "launch",
+      "name": "Lanzamiento de nueva experiencia",
+      "description": "Coordinar producto, comunicación y soporte para una entrega compartida.",
+      "color": "green",
+      "owner": 21,
+      "due": "2026-11-09",
+      "parentId": null,
+      "initiativeId": "customer-experience"
+    },
+    {
+      "id": "onboarding",
+      "name": "Onboarding del equipo",
+      "description": "Que cada persona tenga sus accesos, contexto y primer acompañamiento.",
+      "color": "purple",
+      "owner": 61,
+      "due": "2026-11-16",
+      "parentId": null,
+      "initiativeId": null
+    },
+    {
+      "id": "service",
+      "name": "Mejora de atención",
+      "description": "Reducir los pendientes y documentar los criterios de respuesta.",
+      "color": "blue",
+      "owner": 31,
+      "due": "2026-11-05",
+      "parentId": null,
+      "initiativeId": "customer-experience"
+    },
+    {
+      "id": "help-center",
+      "name": "Centro de ayuda",
+      "description": "Publicar respuestas claras y conectar al equipo con sus procedimientos.",
+      "color": "blue",
+      "owner": 31,
+      "due": "2026-11-03",
+      "parentId": "service",
+      "initiativeId": null
+    }
+  ],
+  "requests": [
+    {
+      "id": "request-registration",
+      "project": "launch",
+      "kind": "bug",
+      "title": "El formulario pierde datos al volver atrás",
+      "description": "Al regresar al paso anterior se borran los datos de contacto. Se espera conservar la información durante el registro.",
+      "requester": 82,
+      "requesterName": "Diego López",
+      "reviewer": 21,
+      "priority": "high",
+      "activity": 25,
+      "status": "new",
+      "due": "",
+      "taskId": null,
+      "decision": "",
+      "comments": [],
+      "history": [
+        {
+          "body": "Solicitud de ejemplo recibida",
+          "at": "2026-10-26T21:13:18.915Z",
+          "author": "Horizonte"
+        }
+      ],
+      "createdAt": "2026-10-26T21:13:18.915Z",
+      "updatedAt": "2026-10-26T21:13:18.915Z"
+    },
+    {
+      "id": "request-guide",
+      "project": "help-center",
+      "kind": "improvement",
+      "title": "Añadir ejemplos a la guía de respuestas",
+      "description": "Incluir ejemplos de respuestas y cuándo escalar una solicitud para que el equipo aplique el mismo criterio.",
+      "requester": 32,
+      "requesterName": "Daniel Ortega",
+      "reviewer": 31,
+      "priority": "normal",
+      "activity": 10,
+      "status": "new",
+      "due": "",
+      "taskId": null,
+      "decision": "",
+      "comments": [],
+      "history": [
+        {
+          "body": "Solicitud de ejemplo recibida",
+          "at": "2026-10-26T21:13:18.915Z",
+          "author": "Horizonte"
+        }
+      ],
+      "createdAt": "2026-10-26T21:13:18.915Z",
+      "updatedAt": "2026-10-26T21:13:18.915Z"
+    },
+    {
+      "id": "request-welcome",
+      "project": "onboarding",
+      "kind": "request",
+      "title": "Preparar una sesión de bienvenida",
+      "description": "Organizar una sesión breve para presentar responsables, documentación y el plan de la primera semana.",
+      "requester": 62,
+      "requesterName": "Diego Pérez",
+      "reviewer": 61,
+      "priority": "normal",
+      "activity": 20,
+      "status": "review",
+      "due": "",
+      "taskId": null,
+      "decision": "",
+      "comments": [],
+      "history": [
+        {
+          "body": "Solicitud de ejemplo recibida",
+          "at": "2026-10-26T21:13:18.915Z",
+          "author": "Horizonte"
+        }
+      ],
+      "createdAt": "2026-10-26T21:13:18.915Z",
+      "updatedAt": "2026-10-26T21:13:18.915Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "project": "launch",
+      "title": "Definir el alcance del lanzamiento",
+      "status": "done",
+      "owner": 71,
+      "due": "2026-10-23",
+      "priority": "high",
+      "activity": 22,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "cb46a100-d958-4804-a770-a8d9cd573e1b",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 71,
+          "due": ""
+        },
+        {
+          "id": "b484e342-09c2-4250-851d-2b25d5d23e4b",
+          "title": "Documentar el resultado",
+          "done": true,
+          "status": "done",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-2",
+      "project": "launch",
+      "title": "Preparar piezas de comunicación",
+      "status": "doing",
+      "owner": 22,
+      "due": "2026-10-28",
+      "priority": "high",
+      "activity": 7,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "587c81be-47f2-4f0a-b597-1e2cda6ab672",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 22,
+          "due": ""
+        },
+        {
+          "id": "18525909-510d-4d9f-9c46-680017dcb425",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [
+        {
+          "id": "56d8e421-fd0e-4a95-ba6b-9d0754678c38",
+          "author": "Ana Torres",
+          "body": "Revisemos las piezas antes de publicarlas.",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-3",
+      "project": "launch",
+      "title": "Validar el flujo de registro",
+      "status": "review",
+      "owner": 82,
+      "due": "2026-10-27",
+      "priority": "urgent",
+      "activity": 25,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "d1b400ca-4862-4e66-bf21-7d1332526cc1",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 82,
+          "due": ""
+        },
+        {
+          "id": "eec91676-4064-4285-8017-20b51bd3490e",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-4",
+      "project": "launch",
+      "title": "Documentar las preguntas frecuentes",
+      "status": "doing",
+      "owner": 32,
+      "due": "2026-10-25",
+      "priority": "high",
+      "activity": 10,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "d4f4b4e6-a937-4be7-825b-9a5460e8b1b1",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 32,
+          "due": ""
+        },
+        {
+          "id": "e36c3034-8ed5-418a-b36e-8cfcf77740c8",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-5",
+      "project": "launch",
+      "title": "Coordinar la publicación",
+      "status": "todo",
+      "owner": 21,
+      "due": "2026-11-02",
+      "priority": "normal",
+      "activity": 7,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "7180f1fd-690d-41c3-9af6-ad45c0797013",
+          "title": "Confirmar alcance y responsable",
+          "done": false,
+          "status": "todo",
+          "owner": 21,
+          "due": ""
+        },
+        {
+          "id": "78046198-74b1-451f-9b58-874adbef7009",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-6",
+      "project": "onboarding",
+      "title": "Preparar accesos de nuevos ingresos",
+      "status": "done",
+      "owner": 81,
+      "due": "2026-10-24",
+      "priority": "high",
+      "activity": 25,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "fd685dc6-a53e-4452-9b97-33ae2fcc90e6",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 81,
+          "due": ""
+        },
+        {
+          "id": "ba736e63-0e99-4fa9-8a54-d2cb172fbcfb",
+          "title": "Documentar el resultado",
+          "done": true,
+          "status": "done",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-7",
+      "project": "onboarding",
+      "title": "Actualizar la guía de bienvenida",
+      "status": "doing",
+      "owner": 62,
+      "due": "2026-10-29",
+      "priority": "normal",
+      "activity": 19,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "e3d723b1-124e-4575-8636-f1e19271734b",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 62,
+          "due": ""
+        },
+        {
+          "id": "54ac80f1-1c7f-4210-8ae6-c668583a6bba",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-8",
+      "project": "onboarding",
+      "title": "Agendar la primera conversación",
+      "status": "todo",
+      "owner": 61,
+      "due": "2026-10-31",
+      "priority": "normal",
+      "activity": 20,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "47584f57-0e41-44c2-99f6-ce3cca717ef4",
+          "title": "Confirmar alcance y responsable",
+          "done": false,
+          "status": "todo",
+          "owner": 61,
+          "due": ""
+        },
+        {
+          "id": "7d6dc6eb-7776-410c-89cd-63b571b6f8ba",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-9",
+      "project": "onboarding",
+      "title": "Revisar el plan de la primera semana",
+      "status": "review",
+      "owner": 12,
+      "due": "2026-10-30",
+      "priority": "low",
+      "activity": 1,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "b7bb47e3-695b-4933-a62d-0a62f0fde2ad",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 12,
+          "due": ""
+        },
+        {
+          "id": "89b24c46-ba90-4ffe-a725-847918f45fa9",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-10",
+      "project": "service",
+      "title": "Revisar solicitudes pendientes",
+      "status": "doing",
+      "owner": 32,
+      "due": "2026-10-24",
+      "priority": "urgent",
+      "activity": 10,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "57640769-86fd-4766-873b-47f48bb60074",
+          "title": "Confirmar alcance y responsable",
+          "done": true,
+          "status": "done",
+          "owner": 32,
+          "due": ""
+        },
+        {
+          "id": "6e730ab5-a275-483e-98a1-4c2af4ef6a04",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-11",
+      "project": "service",
+      "title": "Acordar criterios de escalamiento",
+      "status": "todo",
+      "owner": 31,
+      "due": "2026-10-30",
+      "priority": "high",
+      "activity": 11,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "db0e2322-8d82-4165-ae1a-643067516c3a",
+          "title": "Confirmar alcance y responsable",
+          "done": false,
+          "status": "todo",
+          "owner": 31,
+          "due": ""
+        },
+        {
+          "id": "ea4f832d-374d-4f46-98ae-ce9846b1150e",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    },
+    {
+      "id": "task-12",
+      "project": "help-center",
+      "title": "Publicar guía de respuestas",
+      "status": "todo",
+      "owner": 35,
+      "due": "2026-11-03",
+      "priority": "normal",
+      "activity": 12,
+      "description": "Ejemplo de Horizonte. Define el resultado esperado, reúne el contexto y confirma la entrega con las áreas involucradas.",
+      "checklist": [
+        {
+          "id": "0436951b-d1da-4ce1-82cf-ba2e05f2d3a7",
+          "title": "Confirmar alcance y responsable",
+          "done": false,
+          "status": "todo",
+          "owner": 35,
+          "due": ""
+        },
+        {
+          "id": "6ab2f8ac-9230-4750-95cc-3370c8d92888",
+          "title": "Documentar el resultado",
+          "done": false,
+          "status": "todo",
+          "owner": null,
+          "due": ""
+        }
+      ],
+      "comments": [],
+      "history": [
+        {
+          "body": "Tarea de ejemplo creada",
+          "at": "2026-10-26T21:13:18.916Z"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2026-10-26T21:13:18.916Z",
+      "updatedAt": "2026-10-26T21:13:18.916Z"
+    }
+  ]
+}

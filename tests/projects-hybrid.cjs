@@ -19,6 +19,7 @@ const change=(selector,value)=>{fill(selector,value);$(selector).dispatchEvent(n
 const data=()=>JSON.parse(w.localStorage.getItem(KEY));
 const saved=()=>data().tasks.at(-1);
 const list=scope=>{click('[data-pw-project="'+scope+'"]');click('[data-pw-view="list"]');};
+w.localStorage.setItem(KEY,JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/projects-before-examples.json'),'utf8'))));
 mount();const factory=data();assert.equal(factory.version,3);
 assert.equal(root.querySelectorAll('.pw-project-card').length,3);
 click('[data-pw-toggle="service"]');assert(!root.querySelector('.pw-sidebar [data-pw-project="help-center"]'));assert.equal($('[data-pw-toggle="service"]').getAttribute('aria-expanded'),'false');click('[data-pw-toggle="service"]');
@@ -54,7 +55,7 @@ context={user:{id:32,name:'Paula Ortega',role:'collaborator',permissions:[]},rea
 context={user:{id:1,name:'Ana Torres',role:'admin',permissions:[]},readOnly:false};
 const legacy=structuredClone(factory);legacy.version=1;delete legacy.initiatives;legacy.projects=legacy.projects.filter(p=>p.id!=='help-center');for(const p of legacy.projects){delete p.parentId;delete p.initiativeId;}legacy.tasks.find(t=>t.id==='task-12').project='service';for(const t of legacy.tasks)for(const c of t.checklist){delete c.status;delete c.owner;delete c.due;}
 legacy.projects[0].name='Mi proyecto editado';legacy.tasks[0].comments.push({id:'legacy-note',author:'Julio',body:'Conservar esta nota',at:new Date().toISOString()});legacy.revision=7;
-w.localStorage.setItem(KEY,JSON.stringify(legacy));mount();assert.equal(data().version,1);assert.equal(data().revision,7);assert(root.textContent.includes('Mi proyecto editado'));
-list('all');change('[data-pw-status="task-2"]','done');assert.equal(data().version,3);assert.equal(data().revision,8);assert.equal(data().initiatives.length,0);assert.equal(data().projects.length,3);assert.equal(data().tasks.length,12);assert.equal(data().tasks[0].comments.at(-1).body,'Conservar esta nota');assert.equal(data().tasks[0].checklist[0].status,'done');assert(data().projects.every(p=>!p.parentId&&!p.initiativeId));
+w.localStorage.setItem(KEY,JSON.stringify(legacy));mount();assert.equal(data().version,3);assert.equal(data().revision,8);assert(root.textContent.includes('Mi proyecto editado'));
+list('all');change('[data-pw-status="task-2"]','done');assert.equal(data().version,3);assert.equal(data().revision,9);assert.equal(data().initiatives.length,6);assert.equal(data().projects.length,9);assert.equal(data().tasks.length,43);assert.equal(data().tasks[0].comments.at(-1).body,'Conservar esta nota');assert.equal(data().tasks[0].checklist[0].status,'done');assert(data().projects.slice(0,3).every(p=>!p.parentId&&!p.initiativeId));
 dom.window.close();
 console.log('PASS: hierarchy, creation, optional grouping, cycle prevention, aggregate progress, project origin, Oplen people/activities/docs, document permissions + escaping, subtask assignment/status/dates, filters, readonly, v1 data-preserving migration');

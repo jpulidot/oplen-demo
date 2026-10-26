@@ -150,10 +150,18 @@ Antes de crear se muestra el contenido completo, la fecha de inicio, responsable
 
 La ubicación admite una iniciativa nueva, una iniciativa existente En marcha/En pausa, un proyecto independiente o un subproyecto de un proyecto principal disponible. Por defecto se conserva el contexto de trabajo actual; desde el portafolio se sugiere una iniciativa temática existente o nueva. Las iniciativas archivadas/completadas y los subproyectos no se ofrecen como contenedores nuevos. El nombre de cada copia se propone sin colisiones.
 
-Una sola escritura crea la iniciativa opcional, proyecto, tareas y subtareas. Se generan identidades nuevas para cada copia, se registra su plantilla de origen y se conservan los datos anteriores. La vista previa y cancelar no guardan nada; los errores de espacio o conflictos entre pestañas no dejan proyectos a medias. La creación está desactivada en modo consulta. La clave y formato local v3 permanecen iguales; no se insertan ejemplos adicionales automáticamente en los datos de visitantes existentes.
+Una sola escritura crea la iniciativa opcional, proyecto, tareas y subtareas. Se generan identidades nuevas para cada copia, se registra su plantilla de origen y se conservan los datos anteriores. La vista previa y cancelar no guardan nada; los errores de espacio o conflictos entre pestañas no dejan proyectos a medias. La creación está desactivada en modo consulta. La clave y formato local v3 permanecen iguales; desde 1.10.2, los visitantes sin iniciativas reciben ejemplos una vez, conservando sus proyectos independientes.
 
 Validación: `tests/projects-templates.cjs` cubre las seis plantillas completas, copias independientes, unicidad de IDs, subtareas, lista/tablero, asignaciones, permisos, fechas (incluido cambio de mes/año y año bisiesto), destinos jerárquicos, validación, cancelación, doble envío, fallos de guardado y conflictos. Se ejecuta en GitHub Actions junto a las pruebas existentes.
 
 ### Ajuste de contexto · Demo 1.10.1 / Proyectos 0.6.1
 
 Las tareas de cada ejemplo usan puestos y actividades acordes a su propósito: contenido con Calendario de contenido, resultados con Medición de campañas, onboarding con Onboarding/Evaluación y desarrollo, mejora operativa con Mejora de procesos/Control de calidad y validación con Pruebas y publicación. Las tareas de accesos y recursos técnicos conservan un responsable de infraestructura y quedan sin una actividad vinculada cuando no existe una responsabilidad publicada equivalente.
+
+## Portafolio con ejemplos visibles · Demo 1.10.2 / Proyectos 0.6.2
+
+La primera visita incluye las seis plantillas ya creadas dentro de iniciativas temáticas. Los navegadores que conservan la demo anterior sin iniciativas reciben los seis ejemplos una sola vez al abrir Proyectos. Sus proyectos, tareas, comentarios y solicitudes se conservan; no se reubican ni se reinician. Los ejemplos arrancan la próxima semana y quedan editables.
+
+Un marcador evita volver a insertarlos al recargar o después de quitarlos. Los espacios que ya tienen iniciativas se mantienen sin cambios y pueden completar los ejemplos con **Proyectos de ejemplo → Cargar todos los ejemplos**. Esta acción omite las plantillas ya presentes, reutiliza iniciativas activas compatibles y guarda el conjunto de forma atómica. En consulta no se actualizan datos existentes; un error de guardado conserva el portafolio previo y permite reintentar.
+
+Validación: `tests/projects-demo-examples.cjs` cubre primera visita, actualización desde v1/v2/v3, conservación de contenido, idempotencia, consulta, carga manual parcial, archivo, errores de cuota y conflictos. Las suites anteriores conservan una captura de datos previos como fixture de regresión.
