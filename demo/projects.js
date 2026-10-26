@@ -450,47 +450,47 @@
   }
   const PROJECT_TEMPLATES=[
     {id:'launch',name:'Lanzamiento de producto',category:'Producto',icon:'LP',color:'green',initiative:'Producto y crecimiento',owner:21,description:'Coordina producto, comunicación y soporte para llevar una nueva experiencia al público.',tasks:[
-      ['Definir la propuesta y el alcance','Acordar a quién va dirigido, qué se entrega y cómo se medirá el lanzamiento.',0,71,22,'high',['Definir público y resultado esperado','Acordar criterios de aceptación']],
+      ['Definir la propuesta y el alcance','Acordar a quién va dirigido, qué se entrega y cómo se medirá el lanzamiento.',0,71,23,'high',['Definir público y resultado esperado','Acordar criterios de aceptación']],
       ['Preparar la campaña','Reunir textos, piezas y calendario de comunicación.',4,22,7,'normal',['Redactar mensajes principales','Revisar piezas y canales']],
-      ['Validar la experiencia de registro','Recorrer el flujo principal y resolver los errores antes de publicar.',8,82,25,'high',['Probar el recorrido completo','Registrar y resolver incidencias']],
+      ['Validar la experiencia de registro','Recorrer el flujo principal y resolver los errores antes de publicar.',8,85,26,'high',['Probar el recorrido completo','Registrar y resolver incidencias']],
       ['Preparar al equipo de soporte','Documentar preguntas frecuentes y criterios de escalamiento.',11,32,10,'normal',['Crear respuestas de referencia','Compartir el procedimiento con el equipo']],
       ['Publicar y revisar resultados','Confirmar la salida, observar las primeras señales y registrar aprendizajes.',14,21,7,'high',['Comprobar enlaces y publicación','Revisar resultados y próximos ajustes']]
     ]},
     {id:'onboarding',name:'Onboarding de una persona',category:'Equipo',icon:'ON',color:'purple',initiative:'Desarrollo del equipo',owner:61,description:'Prepara accesos, contexto, acompañamiento y una primera entrega para una nueva incorporación.',tasks:[
-      ['Preparar accesos y herramientas','Confirmar que la persona tenga los recursos necesarios para comenzar.',0,81,25,'high',['Validar cuentas y permisos','Comprobar herramientas de trabajo']],
-      ['Compartir la guía de bienvenida','Presentar al equipo, los acuerdos y la documentación clave.',1,62,19,'normal',['Revisar la guía con la persona','Presentar responsables y canales']],
+      ['Preparar accesos y herramientas','Confirmar que la persona tenga los recursos necesarios para comenzar.',0,88,0,'high',['Validar cuentas y permisos','Comprobar herramientas de trabajo']],
+      ['Compartir la guía de bienvenida','Presentar al equipo, los acuerdos y la documentación clave.',1,65,20,'normal',['Revisar la guía con la persona','Presentar responsables y canales']],
       ['Tener la primera conversación','Acordar expectativas, apoyos y objetivos de la primera semana.',2,61,20,'high',['Aclarar responsabilidades iniciales','Agendar el seguimiento']],
-      ['Acompañar la primera entrega','Practicar una responsabilidad con criterios claros y retroalimentación.',5,62,19,'normal',['Explicar el procedimiento','Revisar el resultado juntos']],
-      ['Cerrar la primera etapa','Revisar avances, dudas y el plan del siguiente mes.',10,61,20,'normal',['Recoger comentarios de la persona','Acordar el siguiente objetivo']]
+      ['Acompañar la primera entrega','Practicar una responsabilidad con criterios claros y retroalimentación.',5,65,20,'normal',['Explicar el procedimiento','Revisar el resultado juntos']],
+      ['Cerrar la primera etapa','Revisar avances, dudas y el plan del siguiente mes.',10,61,21,'normal',['Recoger comentarios de la persona','Acordar el siguiente objetivo']]
     ]},
     {id:'content',name:'Calendario de contenido',category:'Marketing',icon:'CC',color:'orange',initiative:'Marketing y contenido',owner:21,description:'Organiza una campaña de contenido desde las ideas hasta la publicación y el aprendizaje.',tasks:[
-      ['Definir temas y calendario','Elegir público, objetivo, canales y fechas para la campaña.',0,22,7,'high',['Definir temas y formatos','Distribuir las publicaciones']],
+      ['Definir temas y calendario','Elegir público, objetivo, canales y fechas para la campaña.',0,22,8,'high',['Definir temas y formatos','Distribuir las publicaciones']],
       ['Escribir guiones y textos','Preparar mensajes con un objetivo y llamada a la acción claros.',3,23,8,'normal',['Redactar las primeras versiones','Revisar claridad y tono']],
-      ['Producir las piezas','Diseñar o grabar el material listo para cada canal.',6,24,9,'normal',['Producir formatos principales','Revisar adaptaciones']],
-      ['Programar y publicar','Verificar enlaces, copys y archivos antes de publicar.',9,22,7,'high',['Comprobar enlaces y formatos','Confirmar la publicación']],
-      ['Revisar qué funcionó','Comparar resultados y convertir los aprendizajes en nuevas ideas.',14,21,8,'normal',['Reunir resultados por pieza','Acordar cambios para el siguiente ciclo']]
+      ['Producir las piezas','Diseñar o grabar el material listo para cada canal.',6,28,8,'normal',['Producir formatos principales','Revisar adaptaciones']],
+      ['Programar y publicar','Verificar enlaces, copys y archivos antes de publicar.',9,22,8,'high',['Comprobar enlaces y formatos','Confirmar la publicación']],
+      ['Revisar qué funcionó','Comparar resultados y convertir los aprendizajes en nuevas ideas.',14,25,9,'normal',['Reunir resultados por pieza','Acordar cambios para el siguiente ciclo']]
     ]},
     {id:'help-center',name:'Crear un centro de ayuda',category:'Soporte',icon:'CA',color:'blue',initiative:'Experiencia del cliente',owner:31,description:'Convierte las consultas repetidas en guías claras y criterios que el equipo pueda aplicar.',tasks:[
       ['Identificar las preguntas más frecuentes','Revisar casos y elegir los temas que más fricción generan.',0,32,10,'high',['Agrupar consultas recurrentes','Priorizar los primeros artículos']],
       ['Acordar criterios de respuesta','Definir qué resolver, qué escalar y quién decide cada caso.',3,31,11,'high',['Acordar responsables por caso','Documentar límites y excepciones']],
-      ['Redactar las primeras guías','Escribir pasos, ejemplos y resultados esperados.',7,35,12,'normal',['Redactar instrucciones accionables','Añadir ejemplos de respuesta']],
+      ['Redactar las primeras guías','Escribir pasos, ejemplos y resultados esperados.',7,35,10,'normal',['Redactar instrucciones accionables','Añadir ejemplos de respuesta']],
       ['Validar con el equipo','Probar las guías con casos y corregir los puntos confusos.',10,32,10,'normal',['Resolver casos con las guías','Recoger y aplicar comentarios']],
-      ['Publicar y mantener','Compartir el centro de ayuda y definir quién lo actualizará.',14,31,11,'normal',['Publicar los artículos aprobados','Asignar una revisión periódica']]
+      ['Publicar y mantener','Compartir el centro de ayuda y definir quién lo actualizará.',14,31,10,'normal',['Publicar los artículos aprobados','Asignar una revisión periódica']]
     ]},
     {id:'process',name:'Mejorar un proceso',category:'Operación',icon:'MP',color:'green',initiative:'Eficiencia operativa',owner:11,description:'Diagnostica un proceso, prueba una mejora y deja documentada una forma de trabajo sostenible.',tasks:[
-      ['Mapear el proceso actual','Documentar entradas, pasos, responsables y resultado esperado.',0,12,1,'normal',['Dibujar el flujo actual','Identificar decisiones y responsables']],
-      ['Medir el problema','Reunir ejemplos y una referencia para comparar la mejora.',3,13,2,'high',['Reunir datos de referencia','Identificar el principal cuello de botella']],
-      ['Diseñar la mejora','Elegir un cambio concreto y definir cómo se validará.',6,11,3,'high',['Proponer el nuevo flujo','Acordar el criterio de éxito']],
-      ['Probar con un piloto','Aplicar el cambio a un conjunto de casos y observar el resultado.',10,14,2,'normal',['Ejecutar el piloto','Recoger resultados y ajustes']],
-      ['Documentar y extender','Actualizar el procedimiento y compartir los acuerdos con el equipo.',14,12,1,'normal',['Publicar el procedimiento actualizado','Confirmar responsables y seguimiento']]
+      ['Mapear el proceso actual','Documentar entradas, pasos, responsables y resultado esperado.',0,12,6,'normal',['Dibujar el flujo actual','Identificar decisiones y responsables']],
+      ['Medir el problema','Reunir ejemplos y una referencia para comparar la mejora.',3,15,5,'high',['Reunir datos de referencia','Identificar el principal cuello de botella']],
+      ['Diseñar la mejora','Elegir un cambio concreto y definir cómo se validará.',6,11,6,'high',['Proponer el nuevo flujo','Acordar el criterio de éxito']],
+      ['Probar con un piloto','Aplicar el cambio a un conjunto de casos y observar el resultado.',10,18,6,'normal',['Ejecutar el piloto','Recoger resultados y ajustes']],
+      ['Documentar y extender','Actualizar el procedimiento y compartir los acuerdos con el equipo.',14,12,6,'normal',['Publicar el procedimiento actualizado','Confirmar responsables y seguimiento']]
     ]},
     {id:'event',name:'Organizar un evento',category:'Coordinación',icon:'EV',color:'purple',initiative:'Eventos y comunidad',owner:11,description:'Coordina objetivos, logística, comunicación y revisión final para un evento de equipo o comunidad.',tasks:[
-      ['Definir el evento','Acordar objetivo, asistentes, fecha y alcance.',0,11,1,'high',['Definir objetivo y formato','Confirmar responsables y alcance']],
-      ['Coordinar la logística','Preparar espacio, proveedores, agenda y recursos.',5,14,2,'high',['Revisar recursos necesarios','Confirmar agenda y responsables']],
+      ['Definir el evento','Acordar objetivo, asistentes, fecha y alcance.',0,11,4,'high',['Definir objetivo y formato','Confirmar responsables y alcance']],
+      ['Coordinar la logística','Preparar espacio, proveedores, agenda y recursos.',5,18,4,'high',['Revisar recursos necesarios','Confirmar agenda y responsables']],
       ['Preparar la comunicación','Crear la invitación y la información que necesitan los asistentes.',9,22,7,'normal',['Redactar invitación y agenda','Revisar la información de acceso']],
-      ['Hacer una revisión técnica','Probar herramientas, accesos y elementos necesarios para el evento.',13,81,25,'high',['Probar equipos y conexiones','Preparar alternativas']],
-      ['Realizar el evento','Seguir la agenda y registrar incidencias y acuerdos.',14,11,3,'high',['Confirmar que cada área esté lista','Registrar acuerdos y pendientes']],
-      ['Cerrar y recoger aprendizajes','Revisar resultados y documentar mejoras para el siguiente evento.',16,13,2,'normal',['Recoger comentarios','Cerrar pendientes y aprendizajes']]
+      ['Hacer una revisión técnica','Probar herramientas, accesos y elementos necesarios para el evento.',13,88,0,'high',['Probar equipos y conexiones','Preparar alternativas']],
+      ['Realizar el evento','Seguir la agenda y registrar incidencias y acuerdos.',14,11,4,'high',['Confirmar que cada área esté lista','Registrar acuerdos y pendientes']],
+      ['Cerrar y recoger aprendizajes','Revisar resultados y documentar mejoras para el siguiente evento.',16,13,6,'normal',['Recoger comentarios','Cerrar pendientes y aprendizajes']]
     ]}
   ].map(t=>({...t,tasks:t.tasks.map(([title,description,offset,owner,activity,priority,checklist])=>({title,description,offset,owner,activity,priority,checklist}))}));
   const templateDate=(start,offset)=>{const d=new Date(start+'T12:00:00');d.setDate(d.getDate()+offset);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -578,5 +578,5 @@
   }
   window.addEventListener('storage',e=>{if(e.key!==KEY)return;if(dialog){notify('Hay cambios en otra pestaña. Tu formulario sigue abierto; recarga antes de guardar.',true);return;}try{if(host?.isConnected){state=read();if(state)render();else host.innerHTML='<p role="status">La demo se restableció en otra pestaña. Recarga para continuar.</p>';}}catch(err){notify(err.message,true);}});
   window.addEventListener('hashchange',closeDialog);
-  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.6.0'};
+  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.6.1'};
 })();

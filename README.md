@@ -153,3 +153,7 @@ La ubicación admite una iniciativa nueva, una iniciativa existente En marcha/En
 Una sola escritura crea la iniciativa opcional, proyecto, tareas y subtareas. Se generan identidades nuevas para cada copia, se registra su plantilla de origen y se conservan los datos anteriores. La vista previa y cancelar no guardan nada; los errores de espacio o conflictos entre pestañas no dejan proyectos a medias. La creación está desactivada en modo consulta. La clave y formato local v3 permanecen iguales; no se insertan ejemplos adicionales automáticamente en los datos de visitantes existentes.
 
 Validación: `tests/projects-templates.cjs` cubre las seis plantillas completas, copias independientes, unicidad de IDs, subtareas, lista/tablero, asignaciones, permisos, fechas (incluido cambio de mes/año y año bisiesto), destinos jerárquicos, validación, cancelación, doble envío, fallos de guardado y conflictos. Se ejecuta en GitHub Actions junto a las pruebas existentes.
+
+### Ajuste de contexto · Demo 1.10.1 / Proyectos 0.6.1
+
+Las tareas de cada ejemplo usan puestos y actividades acordes a su propósito: contenido con Calendario de contenido, resultados con Medición de campañas, onboarding con Onboarding/Evaluación y desarrollo, mejora operativa con Mejora de procesos/Control de calidad y validación con Pruebas y publicación. Las tareas de accesos y recursos técnicos conservan un responsable de infraestructura y quedan sin una actividad vinculada cuando no existe una responsabilidad publicada equivalente.
