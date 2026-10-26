@@ -181,3 +181,19 @@ La suite de ejemplos verifica la actualización desde una captura de 1.10.2, nom
 Los seis escenarios tienen identidades originales generadas con Imagegen: Luma, Café Bruma, Plano Abierto, Nómada, Casa Olivo y Festival Río Abierto. Los archivos WebP de 256 × 256 viven en `demo/brands/`; suman menos de 25 KB y mantienen el contraste en modo claro/oscuro mediante fondos propios. Los prompts y criterios están en `demo/brands/README.md`.
 
 Los logos aparecen en las tarjetas del portafolio, las cabeceras de iniciativas/proyectos y las tarjetas de proyectos internos. Se resuelven a partir del identificador del escenario sin modificar ni duplicar los datos guardados. Una imagen personalizada siempre tiene prioridad; quitar el logo desde el editor persiste esa elección. Solo se permiten las seis rutas internas conocidas o las imágenes de usuario ya validadas.
+
+## Personal integrado (Demo 1.13.0)
+
+La navegación Personal contiene Inicio, Bandeja, Mi trabajo, Proyectos y Notas. `demo/personal.js` conecta esas pantallas con las transacciones de `demo/projects.js`; las entidades personales se guardan en `personal` dentro del mismo estado y revisión. Convertir una captura en tarea/proyecto/nota es una escritura atómica y conserva su vínculo de origen.
+
+- Inicio incluye briefing por fechas, objetivos con métricas, hasta tres prioridades semanales, revisión y actividad.
+- Mi trabajo conserva lista y tablero, y añade calendario mensual y acuerdos en espera. Las tareas admiten dependencia sin ciclos y repetición diaria, semanal o cada 30 días. Completar una recurrente crea exactamente una siguiente instancia en la misma transacción.
+- Notas privadas o vinculadas a proyectos, archivo/restauración y hasta cinco adjuntos de 1 MB por nota. Los archivos consumen la cuota local del navegador; un error conserva los datos anteriores.
+- Proyectos reúnen trabajo, notas/archivos, solicitudes, acuerdos, presupuesto, actividad y responsables. Los totales financieros usan la moneda elegida; no convierten ni suman monedas distintas.
+- Selector de espacios: el espacio original conserva `oplen-demo-projects-v1`; los nuevos utilizan claves separadas. El espacio activo es por pestaña. Nuevos espacios arrancan vacíos. Exportación JSON del espacio actual desde perfil.
+- Buscar, Crear y avisos son globales. El asistente flotante consulta datos locales del espacio activo, incluyendo objetivos, notas, acuerdos y prioridades. Al cambiar de espacio limpia la conversación anterior.
+- Dictado mediante la API del navegador cuando existe; requiere activar el micrófono y puede usar el servicio de reconocimiento del navegador.
+
+Límites explícitos: sin IA remota, invitaciones reales, permisos multiusuario, sincronización, envío de correos, notificaciones en segundo plano, integraciones de calendario o chat entre personas. El panel de participantes explica esta limitación. No se modificó la aplicación de producción ni Teams.
+
+Validación: `tests/personal-system.cjs` prueba captura/conversión, notas ligadas, presupuestos, revisión semanal, recurrencia, calendario, espacios separados, contenido escapado y conservación frente a conflictos/cuota. Las suites anteriores siguen ejecutándose en CI.
