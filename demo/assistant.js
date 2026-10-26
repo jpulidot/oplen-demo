@@ -1,0 +1,24 @@
+(()=>{'use strict';
+const root=document.createElement('aside');root.className='oa-root';root.setAttribute('aria-label','Asistente Oplen');
+root.innerHTML=`<button class="oa-launch" aria-label="Abrir asistente Oplen" aria-expanded="false" aria-controls="oa-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-3 2 1.5-6A8.5 8.5 0 1 1 21 11.5Z"/><path d="M7 10h9M7 14h6"/></svg></button><section id="oa-panel" class="oa-panel" role="dialog" aria-modal="false" aria-labelledby="oa-title" hidden><header><div><strong id="oa-title">Asistente Oplen</strong><small>Tu espacio, a mano</small></div><button class="oa-close" aria-label="Cerrar asistente">×</button></header><p class="oa-mode">Demo · Consultas locales, sin IA conectada</p><div class="oa-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversación"><p class="oa-message">¿Qué quieres revisar? Puedo resumir tus pendientes, mostrar bloqueos o buscar un proyecto por nombre.</p></div><div class="oa-suggestions"><button>Mis pendientes</button><button>Ver bloqueos</button><button>Resumen de proyectos</button></div><form class="oa-form"><label class="oa-sr" for="oa-input">Mensaje para el asistente</label><input id="oa-input" autocomplete="off" maxlength="600" placeholder="Pregunta por tus proyectos…"><button type="submit" aria-label="Enviar mensaje">↑</button></form><p class="oa-foot">Consulta los datos guardados en este navegador.</p></section>`;
+document.body.append(root);
+const panel=root.querySelector('.oa-panel'),launcher=root.querySelector('.oa-launch'),input=root.querySelector('input'),log=root.querySelector('.oa-log');
+function open(value){panel.hidden=!value;launcher.setAttribute('aria-expanded',String(value));launcher.setAttribute('aria-label',value?'Cerrar asistente Oplen':'Abrir asistente Oplen');(value?input:launcher).focus();}
+launcher.onclick=()=>open(panel.hidden);root.querySelector('.oa-close').onclick=()=>open(false);root.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){e.preventDefault();open(false);}});
+const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function message(text,mine=false){const el=document.createElement('p');el.className='oa-message'+(mine?' oa-mine':'');el.textContent=text;log.append(el);while(log.children.length>40)log.firstElementChild.remove();log.scrollTop=log.scrollHeight;}
+function answer(query){
+ const data=window.OplenProjects?.assistantContext();if(!data)return 'Abre Inicio o Proyectos para cargar tu espacio y vuelve a consultar.';
+ const {tasks,projects,user}=data,active=tasks.filter(t=>!t.archived&&t.status!=='done'),q=normalize(query);
+ const projectName=t=>projects.find(p=>p.id===t.project)?.name||'Proyecto';
+ const list=rows=>rows.slice(0,6).map(t=>'• '+t.title+' · '+projectName(t)+(t.due?' · '+t.due:' · Sin fecha')).join('\n');
+ if(/bloque|impide/.test(q)){const rows=active.filter(t=>t.blockedReason);return rows.length?`${rows.length} tareas bloqueadas en tus proyectos:\n${rows.slice(0,6).map(t=>'• '+t.title+': '+t.blockedReason).join('\n')}`:'No hay tareas activas con un bloqueo registrado.';}
+ if(/pendiente|hoy|prioridad|hacer/.test(q)){const rows=active.filter(t=>String(t.owner)===String(user.id)||t.checklist?.some(c=>!c.done&&String(c.owner)===String(user.id))).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));return rows.length?`Tienes ${rows.length} tareas con trabajo pendiente asignado a ti. Primero las fechas más cercanas:\n${list(rows)}`:'No tienes tareas pendientes asignadas a ti. Tus proyectos pueden tener trabajo asignado a otros participantes; puedes revisarlo desde Proyectos.';}
+ const matches=projects.filter(p=>normalize(p.name).includes(q)||q.includes(normalize(p.name)));
+ if(matches.length){return matches.slice(0,4).map(p=>{const rows=tasks.filter(t=>t.project===p.id&&!t.archived);return p.name+'\n'+rows.filter(t=>t.status==='done').length+' de '+rows.length+' tareas completadas.\n'+list(rows.filter(t=>t.status!=='done'));}).join('\n\n');}
+ if(/resumen|proyecto|avance/.test(q))return `${projects.length} proyectos · ${active.length} tareas abiertas · ${active.filter(t=>t.blockedReason).length} bloqueadas.\n\n${projects.slice(0,6).map(p=>'• '+p.name).join('\n')}\n\nEscribe el nombre de un proyecto para consultar su avance.`;
+ return 'En esta demo puedo consultar pendientes, bloqueos y avances por nombre de proyecto. La conversación libre con IA todavía no está conectada.';
+}
+function send(text){text=text.trim();if(!text)return;message(text,true);input.value='';try{message(answer(text));}catch{message('No pude leer los proyectos guardados. Abre Proyectos para comprobar su estado.');}input.focus();}
+root.querySelector('form').onsubmit=e=>{e.preventDefault();send(input.value);};root.querySelectorAll('.oa-suggestions button').forEach(b=>b.onclick=()=>send(b.textContent));
+})();

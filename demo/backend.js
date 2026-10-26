@@ -11,7 +11,7 @@ if (demoScriptURL && location.origin === 'https://demo.oplen.io') {
 }
 const KEY='oplen-mirror-scale-v2',clone=v=>structuredClone(v),now=()=>new Date().toISOString(),permissions=['directory','departments','knowledge','development','evaluations'];
 // Horizonte: fictional service company, 100 active people across ten departments.
-const demoBuild={version:'1.12.0',updatedAt:'2026-10-26T22:42:20Z',label:'Navegación personal · Inicio, Proyectos y Mi trabajo'};
+const demoBuild={version:'1.12.1',updatedAt:'2026-10-26T23:15:36Z',label:'Navegación personal · Inicio, Proyectos y Mi trabajo'};
 const deptSpecs=[
  ['Dirección','Directora general','Coordinar la estrategia y alinear las metas de toda la compañía.',['Planeación estratégica','Seguimiento del negocio','Gobierno y decisiones'],'Asistente de dirección','Analista de estrategia','Coordinador ejecutivo'],
  ['Operaciones','Manager de operaciones','Asegurar entregas consistentes, capacidad y mejora continua.',['Planificación de capacidad','Control de calidad','Mejora de procesos'],'Analista de operaciones','Especialista de calidad','Coordinador de proyectos'],
