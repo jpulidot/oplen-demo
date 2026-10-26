@@ -175,3 +175,9 @@ El conjunto incluye 12 proyectos, 49 tareas y 98 subtareas. Hay 20 tareas comple
 Los ejemplos genéricos intactos de 1.10.2 se actualizan automáticamente una vez. Se conservan las identidades de proyectos, tareas y subtareas originales. Un proyecto con cambios, comentarios o solicitudes se mantiene intacto; también se respetan iniciativas pausadas o archivadas. Si la iniciativa fue personalizada, se conserva y el ejemplo intacto se ubica en una nueva iniciativa del caso. Los proyectos previos del visitante no se reinician. Las visitas nuevas muestran directamente los seis casos y mantienen los proyectos operativos iniciales como independientes.
 
 La suite de ejemplos verifica la actualización desde una captura de 1.10.2, nombres y entregables concretos, conteos, referencias, avance, bloqueos, conservación de identidades y contenido personalizado, actualización única, consulta, conflictos y recuperación ante falta de espacio.
+
+## Logos de los ejemplos · Demo 1.11.1 / Proyectos 0.7.1
+
+Los seis escenarios tienen identidades originales generadas con Imagegen: Luma, Café Bruma, Plano Abierto, Nómada, Casa Olivo y Festival Río Abierto. Los archivos WebP de 256 × 256 viven en `demo/brands/`; suman menos de 25 KB y mantienen el contraste en modo claro/oscuro mediante fondos propios. Los prompts y criterios están en `demo/brands/README.md`.
+
+Los logos aparecen en las tarjetas del portafolio, las cabeceras de iniciativas/proyectos y las tarjetas de proyectos internos. Se resuelven a partir del identificador del escenario sin modificar ni duplicar los datos guardados. Una imagen personalizada siempre tiene prioridad; quitar el logo desde el editor persiste esa elección. Solo se permiten las seis rutas internas conocidas o las imágenes de usuario ya validadas.
