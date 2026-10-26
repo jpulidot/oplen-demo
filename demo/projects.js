@@ -147,10 +147,12 @@
   }
   function load(){
     state=read();
-    if(!state){state=seed();appendDemoExamples(state);if(!context.readOnly)localStorage.setItem(KEY,JSON.stringify(state));return;}
+    if(!state){state=seed();state.initiatives=[];state.projects.forEach(p=>{if(!p.parentId)p.initiativeId=null;});appendDemoExamples(state);if(!context.readOnly)localStorage.setItem(KEY,JSON.stringify(state));return;}
     // Older demos had independent projects only. Add examples once, without moving or replacing their work.
     if(!context.readOnly&&!state.initiatives.length&&!state.demoExamplesVersion){
       try{commit(appendDemoExamples);}catch(err){notify('No pudimos cargar los ejemplos. Tus proyectos se conservan. '+err.message,true);}
+    }else if(!context.readOnly&&state.demoExamplesVersion===1){
+      try{commit(upgradeDemoExamples);}catch(err){notify('No pudimos actualizar los ejemplos. Tus proyectos se conservan. '+err.message,true);}
     }
   }
   function notify(message,error=false){
@@ -516,7 +518,121 @@
       const p={id:uid(),name:uniqueName(t.name,next.projects),description:t.description,owner,due,startDate:start,color:t.color,parentId:null,initiativeId:group.id,templateId:t.id};
       next.projects.push(p);next.tasks.push(...templateTasks(t,p.id,start,s=>activeOwner(s.owner)?s.owner:null));
     }
-    next.demoExamplesVersion=1;
+    upgradeDemoExamples(next);
+  }
+  const DEMO_SCENARIOS=[
+    {id:'launch',name:'Luma · App de reservas',icon:'LU',color:'blue',owner:71,description:'Lanzar una beta de reservas para 10 estudios de yoga, con pagos y confirmaciones automáticas.',projects:[
+      {name:'Beta de reservas y pagos',description:'Permitir elegir clase, reservar lugar y recibir confirmación. Lista para probar con los primeros estudios.',owner:71,tasks:[
+        ['Validar el flujo con 3 estudios de yoga','Reunir comentarios sobre cupos, cancelaciones y reservas recurrentes.','done',-8,71,22,'high',['Entrevistar a los encargados','Aprobar el recorrido de reserva']],
+        ['Diseñar calendario y ficha de clase','Entregar pantallas para móvil con horarios, cupo y precio visibles.','done',-4,74,24,'normal',['Completar prototipo móvil','Revisar estados sin cupo']],
+        ['Conectar el cobro de una reserva','Registrar el pago de prueba y devolver el lugar cuando falle el cobro.','doing',5,82,25,'high',['Procesar una reserva de prueba','Comprobar cancelación y devolución']],
+        ['Probar la confirmación por correo','Verificar que fecha, estudio y dirección coincidan con la reserva.','review',2,85,26,'high',['Probar reserva y cancelación','Revisar enlaces desde móvil']],
+        ['Publicar la beta para los primeros estudios','Activar la versión aprobada y vigilar errores durante el primer día.','todo',10,81,26,'high',['Aprobar checklist de publicación','Comprobar la primera reserva real']]
+      ]},
+      {name:'Piloto con 10 estudios',description:'Acompañar a los primeros estudios y decidir qué corregir antes del lanzamiento abierto.',owner:31,tasks:[
+        ['Confirmar los 10 estudios del piloto','Registrar contacto y fecha de incorporación de cada estudio.','done',-3,21,7,'normal',['Cerrar lista del piloto','Confirmar disponibilidad']],
+        ['Preparar guía para publicar horarios','Explicar cómo crear una clase y gestionar sus primeras reservas.','doing',6,35,10,'normal',['Grabar recorrido de ejemplo','Probar la guía con un estudio']],
+        ['Revisar la primera semana de reservas','Comparar reservas completadas, cancelaciones y dudas recibidas.','todo',18,31,12,'high',['Reunir resultados del piloto','Priorizar correcciones']]
+      ]}
+    ]},
+    {id:'onboarding',name:'Café Bruma',icon:'BR',color:'orange',owner:11,description:'Abrir una cafetería de 24 lugares y llegar a la inauguración con cocina, barra y equipo listos.',projects:[
+      {name:'Local y operación de apertura',description:'Dejar lista la barra, el equipo y el servicio para la apertura de Café Bruma.',owner:11,tasks:[
+        ['Cerrar distribución de barra y mesas','Aprobar la ubicación de 24 lugares y el recorrido del personal.','done',-10,11,null,'high',['Validar medidas del local','Aprobar plano de distribución']],
+        ['Confirmar proveedores de café y pan','Acordar entregas, cantidades iniciales y contacto de reposición.','done',-6,12,4,'normal',['Comparar muestras y cotizaciones','Confirmar primera entrega']],
+        ['Recibir e instalar la máquina de espresso','Instalar el equipo y probar presión, molienda y suministro de agua.','doing',-1,18,null,'urgent',['Confirmar fecha de entrega','Completar prueba de extracción'],'El proveedor aún no confirma la entrega de la máquina de espresso.'],
+        ['Ensayar un turno con el equipo','Simular pedidos simultáneos y practicar apertura, cobro y cierre.','todo',8,65,20,'high',['Practicar 10 pedidos de prueba','Revisar checklist de cierre']],
+        ['Hacer apertura de prueba para 20 invitados','Medir tiempos de atención y ajustar el servicio antes de inaugurar.','todo',12,11,5,'high',['Confirmar invitados y horario','Registrar tiempos y comentarios']]
+      ]},
+      {name:'Menú y campaña de inauguración',description:'Presentar una carta breve con precios claros y anunciar la apertura al vecindario.',owner:21,tasks:[
+        ['Costear los 8 productos del menú inicial','Registrar ingredientes, rendimiento y margen de cada receta.','done',-5,15,5,'high',['Validar porciones','Aprobar precios']],
+        ['Fotografiar bebidas y pan de la carta','Preparar imágenes para menú, fachada digital y redes.','done',-2,28,8,'normal',['Fotografiar los productos','Exportar versiones para menú y redes']],
+        ['Publicar invitación de apertura','Comunicar ubicación, horario y dinámica del primer fin de semana.','doing',7,22,7,'normal',['Revisar dirección y horarios','Programar las publicaciones']]
+      ]}
+    ]},
+    {id:'content',name:'Plano Abierto · Temporada 1',icon:'PA',color:'purple',owner:21,description:'Producir y publicar seis entrevistas con creadores locales, con un episodio semanal y clips para redes.',projects:[
+      {name:'Producción de los 6 episodios',description:'Llevar cada entrevista de la investigación al video final, con sonido y subtítulos revisados.',owner:21,tasks:[
+        ['Confirmar invitados y calendario de grabación','Cerrar la participación de seis creadores y reservar dos jornadas de grabación.','done',-9,22,8,'high',['Confirmar a los seis invitados','Enviar horarios y ubicación']],
+        ['Preparar escaletas de las entrevistas','Investigar a cada invitado y estructurar apertura, temas y cierre.','done',-4,23,8,'normal',['Investigar obras y trayectoria','Aprobar preguntas principales']],
+        ['Grabar entrevistas 1 y 2','Capturar cámara principal, apoyo y audio de respaldo.','doing',2,28,8,'high',['Probar cámaras y micrófonos','Respaldar el material grabado']],
+        ['Editar el primer episodio de 20 minutos','Armar una historia clara, corregir audio y añadir subtítulos.','todo',8,28,8,'high',['Cerrar montaje','Revisar audio y subtítulos']],
+        ['Publicar el estreno de la temporada','Subir el episodio aprobado con portada, descripción y créditos.','todo',12,22,8,'high',['Revisar exportación y portada','Programar estreno y enlaces']]
+      ]},
+      {name:'Clips y crecimiento del canal',description:'Acompañar cada episodio con tres clips y aprender qué temas llevan público al video completo.',owner:25,tasks:[
+        ['Diseñar portada y plantilla de clips','Definir estilo visual consistente para los seis episodios.','done',-2,28,8,'normal',['Aprobar una portada piloto','Preparar formato vertical']],
+        ['Seleccionar 3 clips del episodio 1','Elegir fragmentos completos con una idea clara y enlace al estreno.','todo',9,23,8,'normal',['Marcar fragmentos en la edición','Escribir títulos de los clips']],
+        ['Revisar retención y clics del estreno','Comparar portada, arranque y momentos de abandono del primer episodio.','todo',19,25,9,'normal',['Reunir métricas a los 7 días','Acordar ajustes para el episodio 2']]
+      ]}
+    ]},
+    {id:'help-center',name:'Nómada · Tienda en línea',icon:'NO',color:'green',owner:21,description:'Lanzar una tienda de mochilas con 20 productos, cobro en línea y envíos nacionales.',projects:[
+      {name:'Catálogo y primera compra',description:'Publicar el catálogo y completar una compra de prueba desde móvil hasta la confirmación.',owner:71,tasks:[
+        ['Cerrar catálogo de 20 mochilas','Reunir variantes, medidas, materiales y existencias iniciales.','done',-7,22,null,'high',['Revisar fichas de los 20 productos','Confirmar variantes y stock']],
+        ['Cargar fotografías y fichas de producto','Publicar imágenes, tamaños y detalles que ayuden a elegir.','doing',5,28,8,'normal',['Exportar fotografías del catálogo','Revisar fichas desde móvil']],
+        ['Activar pagos y compra de prueba','Validar cobro, confirmación y registro del pedido.','doing',1,82,25,'urgent',['Completar verificación del comercio','Probar un pedido de principio a fin'],'Falta la aprobación de la cuenta del comercio por el proveedor de pagos.'],
+        ['Probar cupones y existencias','Evitar descuentos duplicados y compras de productos agotados.','todo',8,85,26,'high',['Probar cupón de bienvenida','Comprobar límite de existencias']],
+        ['Publicar la tienda y revisar el primer pedido','Abrir el catálogo al público y seguir el pedido hasta su preparación.','todo',14,81,26,'high',['Aprobar checklist de salida','Revisar el primer pedido']]
+      ]},
+      {name:'Empaque, envíos y atención',description:'Entregar los pedidos con seguimiento y resolver dudas sobre tallas, entregas y devoluciones.',owner:31,tasks:[
+        ['Elegir empaque para los tres tamaños','Probar protección y medidas con las mochilas del catálogo.','done',-3,18,null,'normal',['Probar empaques con producto','Confirmar insumos para 50 pedidos']],
+        ['Definir tarifas y tiempos de entrega','Publicar zonas, costos y tiempo estimado para cada modalidad.','doing',6,12,4,'high',['Validar tarifas con paquetería','Revisar información en checkout']],
+        ['Publicar guía de cambios y seguimiento','Preparar respuestas para rastreo, cambios y pedidos incompletos.','todo',10,35,10,'normal',['Redactar respuestas de ejemplo','Probar el flujo con soporte']]
+      ]}
+    ]},
+    {id:'process',name:'Casa Olivo · Remodelación',icon:'CO',color:'orange',owner:11,description:'Renovar cocina y sala en seis semanas, coordinando obra, carpintería y entrega del mobiliario.',projects:[
+      {name:'Obra de cocina y sala',description:'Completar instalaciones, acabados y montaje antes de recibir el mobiliario.',owner:11,tasks:[
+        ['Aprobar distribución y presupuesto de obra','Cerrar medidas, materiales y alcance con el equipo de remodelación.','done',-12,11,null,'high',['Revisar plano de cocina y sala','Aprobar presupuesto por partida']],
+        ['Retirar muebles y preparar las áreas','Proteger pisos, liberar zonas de trabajo y retirar elementos anteriores.','done',-8,18,null,'normal',['Proteger accesos y pisos','Confirmar retiro de escombro']],
+        ['Renovar instalaciones de la cocina','Dejar listas tomas eléctricas y conexiones para el nuevo equipamiento.','doing',5,18,null,'high',['Revisar puntos de conexión','Probar instalaciones antes de cerrar']],
+        ['Instalar cubierta y carpintería','Montar los muebles conforme al plano aprobado y revisar ajustes.','todo',14,12,null,'high',['Verificar medidas de fabricación','Revisar puertas, cajones y nivelación']],
+        ['Revisar acabados y recibir la obra','Recorrer cada área y cerrar pendientes antes de la entrega.','todo',21,15,5,'high',['Registrar detalles por corregir','Aprobar entrega final']]
+      ]},
+      {name:'Selección y compra de mobiliario',description:'Elegir piezas compatibles con el nuevo espacio y confirmar entregas para el cierre de obra.',owner:12,tasks:[
+        ['Medir sofá, comedor y circulación','Validar que las piezas elegidas quepan sin bloquear pasos.','done',-10,12,null,'normal',['Medir espacio disponible','Aprobar dimensiones de las piezas']],
+        ['Elegir materiales y luminarias','Cerrar acabados de muebles e iluminación de cocina y sala.','done',-6,12,null,'normal',['Comparar muestras','Aprobar lista de compra']],
+        ['Confirmar pedidos y fechas de entrega','Programar la llegada de los muebles después de terminar los acabados.','done',-2,18,null,'high',['Confirmar pedidos con proveedores','Registrar las fechas acordadas']]
+      ]}
+    ]},
+    {id:'event',name:'Festival Río Abierto',icon:'RA',color:'blue',owner:11,description:'Organizar una jornada de música para 300 asistentes, con seis actos y un escenario al aire libre.',projects:[
+      {name:'Escenario y producción del festival',description:'Coordinar artistas, audio, montaje y operación para una jornada de seis presentaciones.',owner:11,tasks:[
+        ['Confirmar sede, aforo y horario','Acordar áreas de acceso, montaje, escenario y cierre.','done',-10,11,4,'high',['Validar capacidad y distribución','Cerrar horarios con la sede']],
+        ['Cerrar cartel de seis actos','Confirmar tiempos de presentación, contactos y requerimientos de cada acto.','done',-6,13,4,'high',['Confirmar los seis actos','Recibir requerimientos técnicos']],
+        ['Contratar audio e iluminación','Acordar equipo, operadores, montaje y prueba de sonido.','doing',4,18,4,'high',['Validar propuesta técnica','Confirmar equipo y operadores']],
+        ['Aprobar programa y cambios de escenario','Ordenar las presentaciones con tiempos de montaje y responsables.','review',2,11,4,'high',['Preparar programa minuto a minuto','Revisar cambios con los artistas']],
+        ['Realizar montaje y prueba de sonido','Comprobar escenario, monitores y señal antes de abrir puertas.','todo',13,88,null,'urgent',['Probar todos los canales','Confirmar respaldo técnico']],
+        ['Operar el festival y cerrar la jornada','Seguir el programa y documentar incidencias, desmontaje y pendientes.','todo',14,11,4,'high',['Confirmar responsables por zona','Completar cierre y desmontaje']]
+      ]},
+      {name:'Difusión y experiencia del público',description:'Comunicar el cartel, orientar a los asistentes y evaluar la experiencia después del evento.',owner:21,tasks:[
+        ['Publicar cartel y página del evento','Presentar artistas, horarios, ubicación e información de acceso.','done',-3,22,7,'high',['Aprobar cartel con los actos','Revisar enlaces e información']],
+        ['Preparar señalización y equipo de acceso','Definir filas, puntos de información y protocolo de ingreso.','todo',9,18,4,'normal',['Imprimir señalización','Asignar responsables de acceso']],
+        ['Revisar asistencia y comentarios','Reunir conteos, incidencias y opiniones para la siguiente edición.','todo',18,25,9,'normal',['Consolidar resultados del evento','Documentar mejoras acordadas']]
+      ]}
+    ]}
+  ];
+  function pristineTemplateProject(next,p,t){
+    const tasks=next.tasks.filter(task=>task.project===p.id);
+    return p.name===t.name&&p.description===t.description&&p.color===t.color&&p.owner===(activeOwner(t.owner)?t.owner:null)&&!p.parentId&&p.due===templateDate(p.startDate,Math.max(...t.tasks.map(s=>s.offset)))&&tasks.length===t.tasks.length&&!next.projects.some(x=>x.parentId===p.id)&&!next.requests.some(r=>r.project===p.id)&&tasks.every((task,index)=>{const s=t.tasks[index];return task.title===s.title&&task.description===s.description&&task.status==='todo'&&!task.archived&&!task.blockedReason&&!task.comments.length&&task.history.length===1&&task.history[0].body==='Creada desde la plantilla «'+t.name+'»'&&task.owner===(activeOwner(s.owner)?s.owner:null)&&task.due===templateDate(p.startDate,s.offset)&&task.priority===s.priority&&task.checklist.length===s.checklist.length&&task.checklist.every((c,j)=>c.title===s.checklist[j]&&!c.done&&c.status==='todo'&&!c.owner&&!c.due);});
+  }
+  function scenarioTask(spec,existing,projectId,scenarioId){
+    const [title,description,status,offset,owner,activityId,priority,steps,blockedReason]=spec;
+    const checklist=steps.map((title,index)=>({id:existing?.checklist[index]?.id||uid(),title,status:status==='done'||(status==='doing'||status==='review')&&index===0?'done':'todo',done:status==='done'||(status==='doing'||status==='review')&&index===0,owner:null,due:''}));
+    return {...existing,id:existing?.id||uid(),project:projectId,title,description,status,owner:activeOwner(owner)?owner:null,due:day(offset),priority,activity:activity(activityId)?.id||null,checklist,comments:[],history:[{body:'Escenario ficticio de demostración: '+STATUS[status],at:now()}],blockedReason:blockedReason||'',archived:false,createdAt:existing?.createdAt||now(),updatedAt:now(),demoScenarioId:scenarioId};
+  }
+  function upgradeDemoExamples(next){
+    for(const example of DEMO_SCENARIOS){
+      const t=PROJECT_TEMPLATES.find(t=>t.id===example.id),p=next.projects.find(p=>p.templateId===t.id&&!p.demoScenarioId);
+      if(!p||!pristineTemplateProject(next,p,t))continue;
+      let group=next.initiatives.find(i=>i.id===p.initiativeId);
+      if(group&&initiativeStatus(group)!=='active')continue;
+      const pristineGroup=group&&group.name===t.initiative&&group.description===t.description&&group.color===t.color&&group.icon===t.icon&&group.due===p.due&&group.owner===(activeOwner(t.owner)?t.owner:null)&&!group.logo&&next.projects.filter(x=>x.initiativeId===group.id).length===1;
+      if(!pristineGroup){group={id:uid(),status:'active'};next.initiatives.push(group);}
+      Object.assign(group,{name:uniqueName(example.name,next.initiatives.filter(i=>i.id!==group.id)),description:example.description,icon:example.icon,color:example.color,owner:activeOwner(example.owner)?example.owner:null,due:day(Math.max(...example.projects.flatMap(p=>p.tasks.map(t=>t[3])))),demoScenarioId:example.id});
+      example.projects.forEach((spec,index)=>{
+        const target=index===0?p:{id:uid()},originalTasks=index===0?next.tasks.filter(task=>task.project===p.id):[];
+        Object.assign(target,{name:uniqueName(spec.name,next.projects.filter(x=>x.id!==target.id)),description:spec.description,owner:activeOwner(spec.owner)?spec.owner:null,due:day(Math.max(...spec.tasks.map(t=>t[3]))),startDate:day(-14),color:example.color,parentId:null,initiativeId:group.id,demoScenarioId:example.id});
+        if(index)next.projects.push(target);
+        spec.tasks.forEach((task,j)=>{const updated=scenarioTask(task,originalTasks[j],target.id,example.id);if(originalTasks[j])Object.assign(originalTasks[j],updated);else next.tasks.push(updated);});
+      });
+    }
+    next.demoExamplesVersion=2;
   }
   const templateParents=()=>state.projects.filter(p=>!p.parentId&&(!initiativeFor(p)||availableInitiative(initiativeFor(p))));
   function templateDestination(t){
@@ -527,7 +643,7 @@
   }
   function openTemplates(){
     if(context.readOnly)return;
-    const d=modal('Plantillas de proyecto',`<section class="pw-template-library"><p class="pw-template-intro">Elige un ejemplo para explorar Oplen. Cada plantilla crea un proyecto editable con tareas, subtareas y fechas a partir del día que elijas.</p><div class="pw-template-grid">${PROJECT_TEMPLATES.map(t=>`<article><div class="pw-template-card-top">${identity(t)}<span class="pw-overline">${esc(t.category)}</span></div><h3>${esc(t.name)}</h3><p>${esc(t.description)}</p><div class="pw-template-meta"><span>${t.tasks.length} tareas · ${t.tasks.reduce((n,s)=>n+s.checklist.length,0)} subtareas</span><span>Plazo sugerido: ${Math.max(...t.tasks.map(s=>s.offset))} días</span></div>${button('preview-template','Ver plantilla →',`data-pw-template="${t.id}" aria-label="Ver plantilla: ${esc(t.name)}"`,'secondary')}</article>`).join('')}</div><footer class="pw-dialog-actions">${missingDemoExamples(state).length?button('load-demo-examples','Cargar todos los ejemplos','','primary'):''}${button('cancel','Cerrar')}</footer></section>`,true);
+    const d=modal('Plantillas de proyecto',`<section class="pw-template-library"><p class="pw-template-intro">Elige un ejemplo para explorar Oplen. Cada plantilla crea un proyecto editable con tareas, subtareas y fechas a partir del día que elijas.</p><p class="pw-muted">Los proyectos de muestra del portafolio incluyen negocios y entregas ficticias en marcha, con avances y pendientes para explorar.</p><div class="pw-template-grid">${PROJECT_TEMPLATES.map(t=>`<article><div class="pw-template-card-top">${identity(t)}<span class="pw-overline">${esc(t.category)}</span></div><h3>${esc(t.name)}</h3><p>${esc(t.description)}</p><div class="pw-template-meta"><span>${t.tasks.length} tareas · ${t.tasks.reduce((n,s)=>n+s.checklist.length,0)} subtareas</span><span>Plazo sugerido: ${Math.max(...t.tasks.map(s=>s.offset))} días</span></div>${button('preview-template','Ver plantilla →',`data-pw-template="${t.id}" aria-label="Ver plantilla: ${esc(t.name)}"`,'secondary')}</article>`).join('')}</div><footer class="pw-dialog-actions">${missingDemoExamples(state).length?button('load-demo-examples','Cargar proyectos de muestra','','primary'):''}${button('cancel','Cerrar')}</footer></section>`,true);
     const loadAll=d.querySelector('[data-pw-action="load-demo-examples"]');if(loadAll)loadAll.onclick=()=>{if(!missingDemoExamples(state).length)return;try{commit(appendDemoExamples);closeDialog();filter.project='portfolio';portfolio.status='all';portfolio.search='';render();notify('Los ejemplos ya están en tu portafolio.');}catch(err){notify(err.message,true);}};
     d.querySelector('[data-pw-action="cancel"]').onclick=closeDialog;d.querySelectorAll('[data-pw-template]').forEach(b=>b.onclick=()=>openTemplate(b.dataset.pwTemplate));
   }
@@ -601,5 +717,5 @@
   }
   window.addEventListener('storage',e=>{if(e.key!==KEY)return;if(dialog){notify('Hay cambios en otra pestaña. Tu formulario sigue abierto; recarga antes de guardar.',true);return;}try{if(host?.isConnected){state=read();if(state)render();else host.innerHTML='<p role="status">La demo se restableció en otra pestaña. Recarga para continuar.</p>';}}catch(err){notify(err.message,true);}});
   window.addEventListener('hashchange',closeDialog);
-  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.6.2'};
+  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.7.0'};
 })();

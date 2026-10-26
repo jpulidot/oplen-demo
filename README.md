@@ -165,3 +165,13 @@ La primera visita incluye las seis plantillas ya creadas dentro de iniciativas t
 Un marcador evita volver a insertarlos al recargar o después de quitarlos. Los espacios que ya tienen iniciativas se mantienen sin cambios y pueden completar los ejemplos con **Proyectos de ejemplo → Cargar todos los ejemplos**. Esta acción omite las plantillas ya presentes, reutiliza iniciativas activas compatibles y guarda el conjunto de forma atómica. En consulta no se actualizan datos existentes; un error de guardado conserva el portafolio previo y permite reintentar.
 
 Validación: `tests/projects-demo-examples.cjs` cubre primera visita, actualización desde v1/v2/v3, conservación de contenido, idempotencia, consulta, carga manual parcial, archivo, errores de cuota y conflictos. Las suites anteriores conservan una captura de datos previos como fixture de regresión.
+
+## Proyectos concretos de demostración · Demo 1.11.0 / Proyectos 0.7.0
+
+Los ejemplos del portafolio representan seis casos ficticios concretos: **Luma · App de reservas**, **Café Bruma**, **Plano Abierto · Temporada 1**, **Nómada · Tienda en línea**, **Casa Olivo · Remodelación** y **Festival Río Abierto**. Cada iniciativa reúne dos proyectos con entregables propios: beta y piloto; operación y menú; episodios y clips; catálogo y envíos; obra y mobiliario; producción y experiencia del público.
+
+El conjunto incluye 12 proyectos, 49 tareas y 98 subtareas. Hay 20 tareas completadas, trabajo en curso/en revisión, entregas próximas y dos bloqueos concretos (máquina de espresso y aprobación de pagos). Las fechas se calculan desde el día de creación del escenario. Todo el contenido y el avance son ficticios y editables. Las plantillas reutilizables de la galería siguen creando copias desde cero.
+
+Los ejemplos genéricos intactos de 1.10.2 se actualizan automáticamente una vez. Se conservan las identidades de proyectos, tareas y subtareas originales. Un proyecto con cambios, comentarios o solicitudes se mantiene intacto; también se respetan iniciativas pausadas o archivadas. Si la iniciativa fue personalizada, se conserva y el ejemplo intacto se ubica en una nueva iniciativa del caso. Los proyectos previos del visitante no se reinician. Las visitas nuevas muestran directamente los seis casos y mantienen los proyectos operativos iniciales como independientes.
+
+La suite de ejemplos verifica la actualización desde una captura de 1.10.2, nombres y entregables concretos, conteos, referencias, avance, bloqueos, conservación de identidades y contenido personalizado, actualización única, consulta, conflictos y recuperación ante falta de espacio.
