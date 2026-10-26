@@ -11,7 +11,7 @@ if (demoScriptURL && location.origin === 'https://demo.oplen.io') {
 }
 const KEY='oplen-mirror-scale-v2',clone=v=>structuredClone(v),now=()=>new Date().toISOString(),permissions=['directory','departments','knowledge','development','evaluations'];
 // Horizonte: fictional service company, 100 active people across ten departments.
-const demoBuild={version:'1.11.2',updatedAt:'2026-10-26T22:16:46Z',label:'Identidad visual de los proyectos de ejemplo'};
+const demoBuild={version:'1.12.0',updatedAt:'2026-10-26T22:42:20Z',label:'Navegación personal · Inicio, Proyectos y Mi trabajo'};
 const deptSpecs=[
  ['Dirección','Directora general','Coordinar la estrategia y alinear las metas de toda la compañía.',['Planeación estratégica','Seguimiento del negocio','Gobierno y decisiones'],'Asistente de dirección','Analista de estrategia','Coordinador ejecutivo'],
  ['Operaciones','Manager de operaciones','Asegurar entregas consistentes, capacidad y mejora continua.',['Planificación de capacidad','Control de calidad','Mejora de procesos'],'Analista de operaciones','Especialista de calidad','Coordinador de proyectos'],
@@ -191,7 +191,7 @@ function decorateDemoFooter(footer){
  if(!label||!actions)return;
  footer.dataset.demo=demoBuild.version;
  const release=document.createElement('div');release.className='demo-release';
- const title=document.createElement('strong');title.textContent=state.company.name+' · Demo V'+demoBuild.version;release.append(title);
+ const title=document.createElement('strong');title.textContent='Oplen Personal · Demo V'+demoBuild.version;release.append(title);
  const updated=document.createElement('span');updated.className='build-updated';updated.append('Actualización de la demo: ');
  const time=document.createElement('time');time.dateTime=demoBuild.updatedAt;
  time.textContent=new Intl.DateTimeFormat('es-MX',{timeZone:'America/Mexico_City',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(demoBuild.updatedAt));

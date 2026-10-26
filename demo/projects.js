@@ -22,7 +22,7 @@
   const person = id => snapshot.people.find(p=>String(p.id)===String(id));
   const project = id => state.projects.find(p=>p.id===id);
   const initiative = id => state.initiatives.find(p=>p.id===id);
-  const allowed = permission => context.user.role==='admin'||(context.user.permissions||[]).includes(permission);
+  const allowed = permission => !context.personal && (context.user.role==='admin'||(context.user.permissions||[]).includes(permission));
   const activity = id => allowed('departments')?(snapshot.processes||[]).find(p=>String(p.id)===String(id)&&p.status==='published'):null;
   const activities = () => allowed('departments')?(snapshot.processes||[]).filter(p=>p.status==='published'):[];
   const parentProject = p => p?.parentId?project(p.parentId):null;
@@ -92,7 +92,7 @@
   const overdue = t => t.status!=='done' && t.due && t.due<day();
   const ownerLabel = id => person(id)?.name || 'Sin asignar';
   const options = (items,selected) => items.map(([value,label])=>`<option value="${esc(value)}" ${String(value)===String(selected)?'selected':''}>${esc(label)}</option>`).join('');
-  const peopleOptions = selected => options([['','Sin asignar'],...snapshot.people.filter(p=>p.is_active||String(p.id)===String(selected)).map(p=>[String(p.id),p.name+' · '+p.department])], selected);
+  const peopleOptions = selected => options([['','Sin asignar'],...snapshot.people.filter(p=>p.is_active||String(p.id)===String(selected)).map(p=>[String(p.id),p.name+(context.personal?'':' · '+p.department)])], selected);
   const button = (action,label,extra='',kind='secondary') => `<button type="button" class="button ${kind}" data-pw-action="${action}" ${extra}>${label}</button>`;
   function seed(){
     const projects=[
@@ -200,6 +200,21 @@
   function brandLogo(i){return safeLogo(i?.logo)||(i&&!i.demoLogoHidden&&Object.hasOwn(DEMO_BRANDS,i.demoScenarioId)?BRAND_BASE+DEMO_BRANDS[i.demoScenarioId]+'.webp':'');}
   function identity(i,small=false){const logo=brandLogo(i);return `<span class="pw-identity pw-identity-${COLORS.includes(i.color)?i.color:'green'} ${small?'pw-identity-small':''} ${logo?'pw-identity-logo':''}" aria-hidden="true">${logo?`<img src="${esc(logo)}" alt="" width="256" height="256" decoding="async">`:esc(i.icon||initials(i.name))}</span>`;}
   const initiativeProjects=id=>state.projects.filter(p=>!p.parentId&&p.initiativeId===id);
+  function personalPresentation(root){
+    if(!context.personal||!root)return;
+    root.querySelectorAll('[data-pw-filter="department"]').forEach(el=>el.closest('label').remove());
+    root.querySelectorAll('[name="activity"]').forEach(el=>{el.closest('label').hidden=true;el.disabled=true;});
+    root.querySelectorAll('.pw-project-context,#pw-task-context,.pw-operation-context,.pw-team-list small,.pw-project-card-foot > span').forEach(el=>{el.hidden=true;});
+    root.querySelectorAll('.pw-summary-panel > p.pw-muted').forEach(el=>{if(!el.textContent.startsWith('Fecha objetivo:'))el.remove();});
+    root.querySelectorAll('.pw-head .eyebrow,.pw-portfolio-head .eyebrow,.pw-dialog-head .eyebrow').forEach(el=>el.textContent='OPLEN · ESPACIO PERSONAL');
+    root.querySelectorAll('[data-pw-project="mine"],[data-pw-project="portfolio"]').forEach(el=>el.onclick=e=>{e.stopPropagation();const target=el.dataset.pwProject==='mine'?'#/mi-trabajo':'#/proyectos';if(location.hash===target){filter.project=el.dataset.pwProject;filter.view=filter.project==='mine'?'list':'summary';clearFilters();render();}else location.hash=target;});
+  }
+  function renderHome(){
+    const mine=scopeTasks('mine').filter(t=>t.status!=='done'), late=mine.filter(overdue), upcoming=mine.filter(t=>t.due&&!overdue(t)).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
+    host.innerHTML=`<section class="pw-app pw-personal-home"><header class="pw-portfolio-head"><div><p class="eyebrow">OPLEN · ESPACIO PERSONAL</p><h1>Tu día, con claridad.</h1><p>Hola, ${esc(context.user.name.split(' ')[0])}. Aquí está tu siguiente paso.</p></div><a class="button primary" href="#/mi-trabajo">Ver mi trabajo →</a></header><section class="pw-portfolio-overview" aria-label="Tu trabajo pendiente"><span>EN TU RADAR</span><dl><div><dt>Pendientes</dt><dd>${mine.length}</dd></div><div><dt>Vencidas</dt><dd>${late.length}</dd></div><div><dt>Bloqueadas</dt><dd>${mine.filter(t=>t.blockedReason).length}</dd></div></dl></section><div class="pw-summary-grid">${[['Necesitan atención',late.slice(0,6)],['Próximas entregas',upcoming]].map(([title,rows])=>`<section class="pw-summary-panel"><h2>${title}</h2>${rows.map(t=>`<div class="pw-next-task"><div><button class="pw-task-title" data-pw-open="${esc(t.id)}">${esc(t.title)}</button><span class="pw-task-subtitle">${esc(projectPath(t.project))}</span></div><span class="pw-due ${overdue(t)?'pw-late':''}">${dateLabel(t.due)}</span></div>`).join('')||'<p class="pw-muted">No tienes pendientes en esta sección.</p>'}</section>`).join('')}</div><section class="pw-summary-panel"><h2>Lo que estás construyendo</h2><p>Explora tus iniciativas, continúa un proyecto o comienza con una plantilla.</p><a class="button secondary" href="#/proyectos">Abrir proyectos →</a></section></section>`;
+    host.onclick=e=>{const el=e.target.closest('[data-pw-open]');if(el)openTask(el.dataset.pwOpen);};
+    host.oninput=null;host.onchange=null;
+  }
   function renderPortfolio(){
     const visible=state.initiatives.filter(i=>initiativeStatus(i)!=='archived'),visibleIds=new Set(visible.map(i=>i.id));
     const projects=state.projects.filter(p=>!initiativeFor(p)||visibleIds.has(initiativeFor(p).id));
@@ -215,7 +230,7 @@
     root.innerHTML=`<p class="pw-portfolio-result-count">${items.length} de ${candidates.length} iniciativas${portfolio.status==='all'?' · archivadas aparte':''}</p><section class="pw-initiative-grid ${portfolio.view==='list'?'pw-initiative-list':''}" aria-label="Iniciativas">${items.map(i=>{const projects=initiativeProjects(i.id),subprojects=projects.flatMap(p=>children(p.id)),n=statistics(scopeTasks('initiative:'+i.id));return `<article class="pw-initiative-card" data-pw-initiative-card="${esc(i.id)}"><div class="pw-initiative-card-main"><div class="pw-initiative-card-top">${identity(i)}<span class="pw-initiative-state pw-initiative-${initiativeStatus(i)}"><i aria-hidden="true"></i>${INITIATIVE_STATUS[initiativeStatus(i)]}</span></div><div class="pw-initiative-card-copy"><button class="pw-initiative-name" data-pw-project="initiative:${esc(i.id)}">${esc(i.name)}</button><span class="pw-initiative-card-type">INICIATIVA · ${projects.length} ${projects.length===1?'PROYECTO':'PROYECTOS'}${subprojects.length?' · '+subprojects.length+' SUBPROYECTO'+(subprojects.length===1?'':'S'):''}</span>${i.description?`<p>${esc(i.description)}</p>`:''}</div><div class="pw-initiative-card-context"><span>${esc(ownerLabel(i.owner))}</span>${n.total?healthBadge(projectHealth('initiative:'+i.id)):'<span class="pw-muted">Por organizar</span>'}</div></div><footer><div class="pw-initiative-projects">${projects.length?`<span class="pw-project-avatars" aria-hidden="true">${projects.slice(0,4).map(p=>`<span title="${esc(p.name)}">${esc(initials(p.name))}</span>`).join('')}</span><span>${n.done}/${n.total} tareas</span>`:'<span>Sin proyectos todavía</span>'}</div><button class="pw-initiative-explore" data-pw-project="initiative:${esc(i.id)}" aria-label="Explorar ${esc(i.name)}">Explorar ↗</button></footer></article>`;}).join('')}</section>${items.length?'':`<div class="pw-empty"><h3>${query?'No encontramos iniciativas':portfolio.status==='archived'?'No hay iniciativas archivadas':portfolio.status==='all'?'Empieza por una iniciativa':'No hay iniciativas en este estado'}</h3><p>${query?'Prueba con otro nombre, responsable o proyecto.':'Agrupa un objetivo, negocio o área de trabajo y organiza sus proyectos dentro.'}</p>${!context.readOnly&&!query&&portfolio.status==='all'?button('new-initiative','Crear primera iniciativa','','primary'):''}</div>`}${portfolio.status==='all'&&(independent.length||!query)?`<section class="pw-independent"><header><div><h2>Proyectos independientes</h2><p>Pueden funcionar solos o incorporarse a una iniciativa.</p></div>${!context.readOnly?button('new-project','+ Proyecto independiente'):''}</header><div class="pw-independent-grid">${independent.map(p=>`<article><div>${identity(p,true)}<div><button data-pw-project="${esc(p.id)}">${esc(p.name)}</button><span>${esc(ownerLabel(p.owner))} · ${scopeTasks(p.id).length} tareas</span></div></div>${healthBadge(projectHealth(p.id))}</article>`).join('')||'<p class="pw-muted">Los proyectos que no tengan iniciativa aparecerán aquí.</p>'}</div></section>`:''}`;
   }
   function render(){
-    if(!host?.isConnected)return;
+    if(!host?.isConnected)return;if(context.screen==='home'){renderHome();return;}
     snapshot=window.OplenDemo.snapshot();
     if(!['portfolio','all','mine','archive'].includes(filter.project)&&!project(filter.project)&&!initiative(filter.project.slice(11)))filter.project='all';
     if(filter.project==='portfolio'){renderPortfolio();bind();return;}
@@ -231,13 +246,14 @@
       <div class="pw-toolbar"><div class="pw-view-switch" role="group" aria-label="Vista de tareas">${[...(canSummary?[['summary','Resumen']]:[]),['list','Lista'],['board','Tablero']].map(([v,l])=>`<button data-pw-view="${v}" aria-pressed="${filter.view===v}" class="${filter.view===v?'selected':''}">${l}</button>`).join('')}</div>${isSummary?'<span class="pw-view-caption">El avance incluye los subproyectos</span>':`<label class="pw-search"><span class="pw-sr">Buscar tareas</span><input type="search" id="pw-search" placeholder="Buscar trabajo o solicitudes…" value="${esc(filter.search)}"></label>`}</div>
       ${isSummary?'':`<div class="pw-filters">${filter.project==='archive'?'':`<label><span>Mostrar</span><select data-pw-filter="work">${options([['all','Tareas y solicitudes'],['tasks','Solo tareas'],['requests','Solo solicitudes']],filter.work)}</select></label>`}<label><span>Estado</span><select data-pw-filter="status">${options([['','Todos los estados'],...(filter.work==='requests'?[]:Object.entries(STATUS)),...(filter.project==='archive'||filter.work==='tasks'?[]:Object.entries(REQUEST_STATUS).map(([v,l])=>['request:'+v,'Solicitud · '+l]))],filter.status)}</select></label><label><span>Responsable / revisor</span><select data-pw-filter="person">${options([['','Todo el equipo'],['none','Sin asignar'],...snapshot.people.filter(p=>p.is_active).map(p=>[String(p.id),p.name])],filter.person)}</select></label><label><span>Departamento</span><select data-pw-filter="department">${options([['','Todos'],...[...new Set([...activeTasks().map(departmentFor),...state.requests.map(r=>departmentFor({...r,owner:r.reviewer}))].filter(Boolean))].sort().map(n=>[n,n])],filter.department)}</select></label><label><span>Prioridad</span><select data-pw-filter="priority">${options([['','Todas'],...Object.entries(PRIORITY)],filter.priority)}</select></label><label><span>Fecha</span><select data-pw-filter="due">${options([['','Todas'],['late','Vencidas'],['week','Próximos 7 días'],['none','Sin fecha']],filter.due)}</select></label>${filter.work==='requests'?`<label><span>Tipo</span><select data-pw-filter="requestType">${options([['','Todos los tipos'],...Object.entries(REQUEST_KIND)],filter.requestType)}</select></label>`:''}${filter.work!=='requests'&&filter.project!=='archive'?`<label><span>Atención</span><select data-pw-filter="attention">${options([['','Todo el trabajo'],['all','Con alertas'],['danger','Requiere atención'],['warning','En riesgo'],['blocked','Bloqueadas']],filter.attention)}</select></label>`:''}<span id="pw-count"></span>${button('clear-filters','Limpiar filtros','','pw-text')}</div>`}
       <div id="pw-results"></div></section></div><p class="pw-footnote">Datos de prueba de Horizonte. Los cambios se guardan en este navegador.</p></div>`;
-    bind();renderResults();
+    bind();renderResults();personalPresentation(host);
   }
   function projectCard(p){
     const n=progress(p),depts=[...new Set(scopeTasks(p.id).map(departmentFor).filter(Boolean))];
     return `<article class="pw-project-card"><div class="pw-card-top"><span class="pw-overline">${esc(p.parentId?'SUBPROYECTO':initiativeFor(p)?.name||'PROYECTO INDEPENDIENTE')}</span>${healthBadge(projectHealth(p.id))}</div><button class="pw-card-heading" data-pw-project="${esc(p.id)}">${brandLogo(initiativeFor(p)||p)?identity(initiativeFor(p)||p,true):`<i class="pw-dot pw-color-${esc(p.color)}"></i>`}${esc(p.name)}</button><p>${esc(p.description||'Agrega un objetivo para dar contexto al equipo.')}</p><div class="pw-card-person">${avatar(p.owner)}<span class="pw-muted">${dateLabel(p.due)}</span></div><div class="pw-project-meta"><span>${n.done} de ${n.total} tareas</span><b>${n.percent}%</b></div><span class="pw-progress"><i style="width:${n.percent}%"></i></span>${projectHealth(p.id).issues.length?`<button class="pw-card-alert" data-pw-action="view-health" data-pw-target="${esc(p.id)}">${esc(projectHealth(p.id).text)} · Ver motivos →</button>`:''}<div class="pw-project-card-foot"><span>${esc(depts.join(' · ')||'Equipo por asignar')}</span>${button('view-project-work','Ver trabajo →',`data-pw-target="${esc(p.id)}"`,'pw-text')}</div></article>`;
   }
   function personContext(id){
+    if(context.personal)return person(id)?`<div class="pw-owner-context">${avatar(id)}</div>`:'<p class="pw-muted">Sin responsable asignado.</p>';
     const p=person(id);
     return p?`<div class="pw-owner-context">${avatar(id)}<p>${esc(p.job_title)} · ${esc(p.department)}</p>${p.manager_name?`<small>Líder: ${esc(p.manager_name)}</small>`:''}</div>`:'<p class="pw-muted">Asigna una persona para conectar el trabajo con su puesto y departamento.</p>';
   }
@@ -278,7 +294,8 @@
     const operations=[...new Set(rows.map(t=>t.activity).filter(Boolean))].map(activity).filter(Boolean);
     host.querySelector('#pw-results').innerHTML=`${healthPanel(filter.project)}${metrics(rows)}${requestQueue(state.requests.filter(r=>requestInScope(r)&&requestPending(r)),true)}${projects.length?`<section class="pw-portfolio"><h3>${p?'Subproyectos':'Proyectos del espacio'}</h3><div class="pw-portfolio-grid">${projects.map(projectCard).join('')}</div></section>`:''}<div class="pw-summary-grid"><section class="pw-summary-panel"><header><div><span class="pw-overline">PRÓXIMOS PASOS</span><h3>Trabajo por atender</h3></div><button data-pw-view="list" class="button pw-text">Ver todas las tareas →</button></header>${pending.map(t=>`<div class="pw-next-task"><div><button class="pw-task-title" data-pw-open="${esc(t.id)}">${esc(t.title)}</button><span class="pw-task-subtitle">${esc(projectPath(t.project))} · ${esc(ownerLabel(t.owner))}</span></div><span class="pw-due ${overdue(t)?'pw-late':''}">${dateLabel(t.due)}${overdue(t)?'<small>Vencida</small>':''}</span></div>`).join('')||'<p class="pw-muted">No hay tareas pendientes. Puedes añadir la siguiente entrega.</p>'}</section><section class="pw-summary-panel"><span class="pw-overline">PERSONAS Y CONTEXTO</span><h3>${p||i?'Responsable':'Equipo involucrado'}</h3>${p||i?personContext((p||i).owner):`<strong class="pw-team-count">${members.length} ${members.length===1?'persona':'personas'}</strong>`}${(p||i)?.due?`<p class="pw-muted">Fecha objetivo: ${dateLabel((p||i).due)}</p>`:''}<p class="pw-muted">${esc(depts.join(' · ')||'Los departamentos aparecerán al asignar trabajo.')}</p>${members.length?`<details class="pw-team-list"><summary>${members.length} ${members.length===1?'persona participa':'personas participan'}</summary>${members.map(id=>`<p>${esc(ownerLabel(id))}<small>${esc(person(id)?.job_title||'')}</small></p>`).join('')}</details>`:''}</section></div>${p||i?`<section class="pw-summary-panel pw-project-context"><span class="pw-overline">CONECTADO CON OPLEN</span><h3>Actividades y documentación</h3><p class="pw-muted">Las tareas se vinculan a responsabilidades del equipo. Aquí encuentras sus criterios y guías.</p>${operations.map(a=>`<details class="pw-activity-detail"><summary>${esc(a.title)}<span>${esc(a.department_name)}</span></summary>${operationContext(a.id)}</details>`).join('')||'<p class="pw-muted">Vincula una actividad desde el detalle de una tarea para ver su contexto aquí.</p>'}</section>`:''}`;
   }
-  function renderResults(){
+  function renderResults(){try{return renderResultsContent();}finally{personalPresentation(host);}}
+  function renderResultsContent(){
     const root=host.querySelector('#pw-results');if(!root)return;
     if(filter.view==='summary'){renderSummary();return;}
     const rows=filtered(),requests=filteredRequests();host.querySelector('#pw-count').textContent=`${rows.length} tareas · ${requests.length} solicitudes`;
@@ -300,6 +317,7 @@
   }
   function clearFilters(){Object.assign(filter,{search:'',status:'',person:'',priority:'',department:'',due:'',work:'all',requestType:'',attention:''});}
   function bind(){
+    personalPresentation(host);
     host.onclick=e=>{
       const el=e.target.closest('button');if(!el||!host.contains(el))return;
       if(el.dataset.pwPortfolioStatus!==undefined){portfolio.status=el.dataset.pwPortfolioStatus;render();return;}
@@ -339,7 +357,7 @@
     dialog.innerHTML=`<header class="pw-dialog-head"><div><p class="eyebrow">${esc(snapshot.company?.name||'HORIZONTE')} · PROYECTOS</p><h2 id="pw-dialog-title">${esc(title)}</h2></div>${button('close','×','aria-label="Cerrar formulario"','pw-icon')}</header>${body}`;
     document.body.append(dialog);dialog.querySelector('[data-pw-action="close"]').onclick=closeDialog;
     dialog.addEventListener('cancel',e=>{e.preventDefault();closeDialog();});
-    dialog.showModal();return dialog;
+    personalPresentation(dialog);dialog.showModal();return dialog;
   }
   function errorForm(form,message){const node=form.querySelector('[data-pw-error]');node.textContent=message;node.hidden=false;}
   const requestPending = r => ['new','review'].includes(r.status);
@@ -702,7 +720,7 @@
     const blocked=form.elements.blocked;
     function renderBlocker(){if(form.elements.status.value==='done')blocked.checked=false;blocked.disabled=locked||form.elements.status.value==='done';form.querySelector('[data-pw-block-fields]').hidden=!blocked.checked;}
     blocked.addEventListener('change',renderBlocker);form.elements.status.addEventListener('change',renderBlocker);renderBlocker();
-    function renderContext(){d.querySelector('#pw-task-context').innerHTML=`<span class="pw-overline">CONTEXTO DE OPLEN</span><h3>Quién lo hace y cómo</h3>${personContext(form.elements.owner.value)}${operationContext(form.elements.activity.value)}`;}
+    function renderContext(){if(context.personal)return;d.querySelector('#pw-task-context').innerHTML=`<span class="pw-overline">CONTEXTO DE OPLEN</span><h3>Quién lo hace y cómo</h3>${personContext(form.elements.owner.value)}${operationContext(form.elements.activity.value)}`;}
     form.elements.owner.addEventListener('change',renderContext);form.elements.activity.addEventListener('change',renderContext);renderContext();
     function checks(){
       d.querySelector('#pw-check-count').textContent=`${task.checklist.filter(i=>i.done).length}/${task.checklist.length}`;
@@ -720,5 +738,5 @@
   }
   window.addEventListener('storage',e=>{if(e.key!==KEY)return;if(dialog){notify('Hay cambios en otra pestaña. Tu formulario sigue abierto; recarga antes de guardar.',true);return;}try{if(host?.isConnected){state=read();if(state)render();else host.innerHTML='<p role="status">La demo se restableció en otra pestaña. Recarga para continuar.</p>';}}catch(err){notify(err.message,true);}});
   window.addEventListener('hashchange',closeDialog);
-  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},version:'0.7.2'};
+  window.OplenProjects={mount(root,opts){closeDialog();host=root;context=opts;snapshot=window.OplenDemo.snapshot();try{load();if(opts.screen){clearFilters();filter.project=opts.screen==='mywork'?'mine':'portfolio';filter.view=opts.screen==='mywork'?'list':'summary';}if(opts.screen==='home')renderHome();else render();}catch(err){host.innerHTML=`<section class="pw-app pw-empty"><h1>No pudimos abrir los proyectos</h1><p role="alert">${esc(err.message)}</p><p>Comprueba que tu navegador permita guardar datos y vuelve a cargar la página.</p></section>`;}},profile(root,user){root.innerHTML=`<section class="pw-app pw-empty"><p class="eyebrow">OPLEN · ESPACIO PERSONAL</p><h1>Mi perfil</h1><h2>${esc(user.name)}</h2><p>Tu espacio para organizar proyectos y pendientes.</p><p>La apariencia se cambia con el control de tema del menú.</p><a class="button primary" href="#/proyectos">Ver mis proyectos</a></section>`;},version:'0.8.0'};
 })();

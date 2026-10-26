@@ -97,3 +97,6 @@
 
 /* Project brand marks are opaque tiles with their own contrast in both themes. */
 .pw-identity-logo{border-color:transparent;background:transparent}.pw-identity-logo img{background:transparent}.pw-portfolio-home .pw-identity:not(.pw-identity-small){width:56px;height:56px;flex-basis:56px;border-radius:14px}.pw-work-title{display:flex;align-items:center;gap:12px;margin:4px 0 8px}.pw-work-title h2{margin:0}.pw-work-title .pw-identity{flex-shrink:0}.pw-card-heading .pw-identity-small{width:30px;height:30px;flex-basis:30px;border-radius:8px}.pw-card-heading{align-items:center}
+/* Personal presentation keeps legacy links in saved data, outside the interface. */
+.pw-app [hidden],.pw-dialog [hidden]{display:none!important}
+.pw-personal-home .pw-summary-grid{margin:24px 0}.pw-personal-home .pw-summary-panel h2{font-size:18px;margin:0 0 18px}.pw-personal-home>.pw-summary-panel{margin-top:24px}
