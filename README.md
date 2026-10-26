@@ -100,3 +100,15 @@ Pruebas adicionales: `node tests/projects-hybrid.cjs` con jsdom 30.1.1. Cubre cr
 ## Identificación del despliegue · Demo 1.6.0
 
 El pie de página muestra primero la versión y fecha de publicación de esta demo (zona America/Mexico_City), junto con la versión del módulo Proyectos que realmente se cargó. La versión/fecha de la interfaz compartida se conserva dentro de «Versión de la interfaz base». Los metadatos del demo se mantienen en `demoBuild` de `demo/backend.js`; la versión de Proyectos proviene de `window.OplenProjects.version`. No se atribuye una actualización de la demo a la app compartida.
+
+## Solicitudes y feedback · Proyectos 0.3.0 · Demo 1.7.0
+
+Peticiones, errores y mejoras se registran dentro del proyecto o subproyecto, con solicitante, responsable de revisión, prioridad, fecha solicitada, actividad operativa, conversación e historial. Aparecen en el resumen y encima de las tareas de lista/tablero; el filtro «Mostrar» permite ver trabajo mixto, solo tareas o todas las solicitudes (incluidas aceptadas/cerradas). No se añade otro módulo ni una bandeja global separada.
+
+Flujo: nueva → en revisión → aceptada y convertida en tarea, o cerrada sin tarea con motivo obligatorio. Una solicitud cerrada sin tarea se puede reabrir. La conversión requiere responsable activo y guarda solicitud/tarea en una sola escritura con control de revisión, evitando duplicados. La tarea conserva `sourceRequestId` y la solicitud conserva `taskId`; el contexto y la conversación original se consultan desde la tarea. Al completar o reabrir la tarea, el estado visible de la solicitud se actualiza de forma derivada. Archivar una tarea conserva el vínculo y muestra ese estado sin crear reemplazos.
+
+El solicitante puede ajustar una petición pendiente; las decisiones corresponden en esta demo a Administración, responsable del proyecto/iniciativa o revisor asignado. La vista previa sigue siendo de consulta. Son controles de experiencia sobre datos ficticios locales, no sustituyen autorización en servidor ni colaboración multiusuario. No se envían mensajes, correos ni notificaciones externas.
+
+El contenido guardado pasa a `version: 3` al siguiente cambio; se conserva la misma clave. Navegadores con v1/v2 mantienen todos sus proyectos, tareas y comentarios y comienzan con solicitudes vacías. Una demo nueva incluye tres ejemplos de solicitudes. La versión 0.2.0 rechaza v3 para evitar sobrescrituras desde pestañas antiguas; un rollback requiere lector compatible o retirar el módulo conservando la clave.
+
+Prueba: `node tests/projects-requests.cjs` (jsdom 30.1.1). Cubre recepción, jerarquía, filtros, conversación, revisión, conversión atómica sin duplicados, origen, cierre/reapertura/archivo de tareas, motivo de rechazo, permisos, consulta, conflictos entre pestañas, fallos de almacenamiento y migración v2.
