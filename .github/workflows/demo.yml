@@ -31,5 +31,6 @@ jobs:
           node tests/projects.cjs
           node tests/projects-hybrid.cjs
           node tests/projects-requests.cjs
+          node tests/projects-health.cjs
       - name: Legacy demo entry routing
         run: node tests/entry-routing.cjs

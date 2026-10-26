@@ -112,3 +112,20 @@ El solicitante puede ajustar una petición pendiente; las decisiones corresponde
 El contenido guardado pasa a `version: 3` al siguiente cambio; se conserva la misma clave. Navegadores con v1/v2 mantienen todos sus proyectos, tareas y comentarios y comienzan con solicitudes vacías. Una demo nueva incluye tres ejemplos de solicitudes. La versión 0.2.0 rechaza v3 para evitar sobrescrituras desde pestañas antiguas; un rollback requiere lector compatible o retirar el módulo conservando la clave.
 
 Prueba: `node tests/projects-requests.cjs` (jsdom 30.1.1). Cubre recepción, jerarquía, filtros, conversación, revisión, conversión atómica sin duplicados, origen, cierre/reapertura/archivo de tareas, motivo de rechazo, permisos, consulta, conflictos entre pestañas, fallos de almacenamiento y migración v2.
+
+## Semáforo de proyectos · Demo 1.8.0 / Proyectos 0.4.0 · 26 Oct 2026
+
+El resumen general, cada iniciativa, proyecto y subproyecto muestran un semáforo calculado y un acceso a sus motivos. Cada tarea se cuenta una sola vez al agrupar la jerarquía; una tarea puede tener varios motivos. El detalle abre la tarea implicada o el proyecto cuya fecha objetivo necesita revisión.
+
+- **Requiere atención (rojo):** tarea o subtarea vencida, bloqueo con motivo, o fecha objetivo de proyecto/iniciativa vencida con tareas pendientes.
+- **En riesgo (amarillo):** entrega de tarea/subtarea o fecha objetivo dentro de los próximos tres días de calendario, incluido hoy; responsable ausente o no disponible. Una subtarea sin asignación usa el responsable de su tarea.
+- **En orden:** existen tareas pendientes y ninguna alerta de las anteriores.
+- **Completado:** todas las tareas activas están completadas; **Sin evaluar:** no hay tareas activas. Los proyectos vacíos no se presentan como saludables.
+
+Los cálculos usan el día local del navegador, se actualizan al guardar/cambiar estado/abrir Proyectos y no se escriben en localStorage. Las tareas completadas y archivadas, incluidas sus subtareas, quedan fuera de las alertas. Las solicitudes pendientes mantienen su propio seguimiento; al aceptarlas, su tarea participa en el cálculo como cualquier otra.
+
+El formulario de tarea permite declarar un bloqueo con motivo obligatorio. No cambia la columna de ejecución. El motivo y su resolución quedan en el historial; desmarcar el bloqueo o completar la tarea lo resuelve. Al reabrirla no reaparece un bloqueo ya resuelto. Lista y tablero incluyen un filtro de Atención que pasa a Solo tareas y permite revisar alertas, riesgo, atención o bloqueos.
+
+La clave `oplen-demo-projects-v1` y su formato v3 se conservan. `blockedReason` es opcional en los datos anteriores y solo se guarda al editar una tarea. Se mantienen solicitudes, conversaciones, asignaciones, permisos de consulta y controles contra conflictos entre pestañas y errores de guardado. Sigue siendo una demo local sin colaboración en servidor ni cambios en la app real.
+
+Validación: `node tests/projects-health.cjs` cubre límites de fechas, cambio de mes, jerarquía, subtareas, fechas objetivo, exclusiones, ciclo de bloqueo/resolución, filtros lista/tablero, escape de contenido, consulta, conservación de datos y fallos de guardado. Se ejecuta junto a las suites existentes en GitHub Actions.
