@@ -129,3 +129,15 @@ El formulario de tarea permite declarar un bloqueo con motivo obligatorio. No ca
 La clave `oplen-demo-projects-v1` y su formato v3 se conservan. `blockedReason` es opcional en los datos anteriores y solo se guarda al editar una tarea. Se mantienen solicitudes, conversaciones, asignaciones, permisos de consulta y controles contra conflictos entre pestañas y errores de guardado. Sigue siendo una demo local sin colaboración en servidor ni cambios en la app real.
 
 Validación: `node tests/projects-health.cjs` cubre límites de fechas, cambio de mes, jerarquía, subtareas, fechas objetivo, exclusiones, ciclo de bloqueo/resolución, filtros lista/tablero, escape de contenido, consulta, conservación de datos y fallos de guardado. Se ejecuta junto a las suites existentes en GitHub Actions.
+
+## Portafolio de iniciativas · Demo 1.9.0 / Proyectos 0.5.0 · 26 Oct 2026
+
+La entrada de Proyectos ahora es **Tus iniciativas**, siguiendo el portafolio de Command: tarjetas con identidad propia, vista compacta/lista, búsqueda y filtros Todas/En marcha/En pausa/Completadas/Archivadas. Desde una tarjeta se explora la iniciativa, sus proyectos y subproyectos hasta las tareas, solicitudes y contexto operativo de Oplen. El semáforo se mantiene como información de apoyo.
+
+Cada iniciativa permite nombre, objetivo, responsable, fecha, color, iniciales/símbolo y logo opcional PNG/JPG/WebP de hasta 200 KB. El logo queda en los datos locales; no se solicitan URLs externas. Los datos anteriores sin estado se interpretan como En marcha y sin identidad usan iniciales, sin reescribir el almacenamiento al abrir.
+
+El panorama cuenta iniciativas no archivadas, proyectos (incluidos subproyectos) fuera de iniciativas archivadas y sus tareas abiertas. Las tarjetas distinguen proyectos principales de subproyectos y muestran el avance de sus tareas. La búsqueda incluye nombre, objetivo, responsable y nombres de los proyectos principales. Las iniciativas archivadas se consultan en su filtro y se pueden restaurar cambiando su estado. Pausar/archivar no elimina ni completa trabajo; una iniciativa con tareas activas pendientes no se puede marcar Completada. Todo el trabajo permanece disponible en la vista operativa.
+
+Los proyectos independientes se presentan en una sección propia, con acceso y creación directa. No se agrupan automáticamente ni se copian las iniciativas personales de la referencia de Command a la demo pública. El portafolio respeta los modos claro/oscuro de Oplen y adapta tarjetas y lista a pantallas pequeñas.
+
+Validación: `tests/projects-portfolio.cjs` cubre entrada, contadores, búsqueda y vistas, navegación iniciativa/proyecto/subproyecto/tarea, creación e identidad, carga/eliminación/validación de logos, estados y archivo reversible, protección de datos previos, permisos de consulta, validación de finalización, escape y guardado con conflictos o falta de espacio. Las suites operativas existentes entran por Todo el trabajo y mantienen su cobertura.

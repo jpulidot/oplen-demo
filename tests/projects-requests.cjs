@@ -5,7 +5,7 @@ const dom=new JSDOM('<div id="app"><main id="content"></main></div>',{url:'https
 const w=dom.window;w.structuredClone=structuredClone;w.Response=Response;w.fetch=async()=>{throw Error('No network expected');};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
 for(const name of ['demo/backend.js','demo/projects.js'])w.eval(fs.readFileSync(path.join(__dirname,'..',name),'utf8'));
 let context={user:{id:1,name:'Ana Torres',role:'admin',permissions:['departments','knowledge']},readOnly:false};
-const root=w.document.querySelector('#content'),mount=()=>w.OplenProjects.mount(root,context),data=()=>JSON.parse(w.localStorage.getItem(KEY));
+const root=w.document.querySelector('#content'),mount=()=>{w.OplenProjects.mount(root,context);if(root.querySelector('.pw-portfolio-home'))root.querySelector('[data-pw-project="all"]').click();},data=()=>JSON.parse(w.localStorage.getItem(KEY));
 const $=s=>{const e=w.document.querySelector(s);assert(e,'Missing '+s);return e;},click=s=>$(s).click(),fill=(s,v)=>{$(s).value=v;},change=(s,v)=>{fill(s,v);$(s).dispatchEvent(new w.Event('change',{bubbles:true}));};
 const send=(action='save',form=$('#pw-request-form'))=>{let b=form.querySelector('[data-pw-decision="'+action+'"]');if(!b){b=w.document.createElement('button');b.dataset.pwDecision=action;}form.dispatchEvent(new w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:b}));};
 const close=()=>click('[data-pw-action="cancel"]');

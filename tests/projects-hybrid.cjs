@@ -10,7 +10,7 @@ w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialog
 for(const file of ['demo/backend.js','demo/projects.js'])w.eval(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
 let context={user:{id:1,name:'Ana Torres',role:'admin',permissions:['departments','knowledge','directory']},readOnly:false};
 const root=w.document.querySelector('#content');
-const mount=()=>w.OplenProjects.mount(root,context);
+const mount=()=>{w.OplenProjects.mount(root,context);if(root.querySelector('.pw-portfolio-home'))root.querySelector('[data-pw-project="all"]').click();};
 const $=selector=>{const el=w.document.querySelector(selector);assert(el,'Missing '+selector);return el;};
 const click=selector=>$(selector).click();
 const fill=(selector,value)=>{$(selector).value=value;};

@@ -13,7 +13,7 @@ w.HTMLDialogElement.prototype.close=function(){this.open=false;};
 w.eval(backend);w.eval(moduleSource);
 let context={user:{id:1,name:'Ana Torres',role:'admin',permissions:['departments','knowledge','directory']},readOnly:false};
 const root=w.document.querySelector('#content');
-const mount=()=>w.OplenProjects.mount(root,context);
+const mount=()=>{w.OplenProjects.mount(root,context);if(root.querySelector('.pw-portfolio-home'))root.querySelector('[data-pw-project="all"]').click();};
 const $=s=>{const e=w.document.querySelector(s);assert(e,'Missing '+s);return e;};
 const click=s=>$(s).click();
 const fill=(s,v)=>{$(s).value=v;};

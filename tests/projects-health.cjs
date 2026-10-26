@@ -9,7 +9,7 @@ w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialog
 const RealDate=w.Date;let clock='2026-10-30T12:00:00';w.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[clock]));}static now(){return new RealDate(clock).getTime();}};
 for(const file of ['demo/backend.js','demo/projects.js'])w.eval(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
 let context={user:{id:1,name:'Ana Torres',role:'admin',permissions:['departments','knowledge']},readOnly:false};
-const root=w.document.querySelector('#content'),mount=()=>w.OplenProjects.mount(root,context);
+const root=w.document.querySelector('#content'),mount=()=>{w.OplenProjects.mount(root,context);if(root.querySelector('.pw-portfolio-home'))root.querySelector('[data-pw-project="all"]').click();};
 const $=s=>{const e=w.document.querySelector(s);assert(e,'Missing '+s);return e;};
 const click=s=>$(s).click(),fill=(s,v)=>{$(s).value=v;},change=(s,v)=>{fill(s,v);$(s).dispatchEvent(new w.Event('change',{bubbles:true}));};
 const submit=()=>$('#pw-task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
